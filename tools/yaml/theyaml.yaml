@@ -116,7 +116,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: media_player.volume_up
-        Data_json: {'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Volume Down
     Icon: placeholder
@@ -125,7 +125,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: media_player.volume_down
-        Data_json: {'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Volume Mute
     Icon: placeholder
@@ -134,7 +134,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'MUTE', 'entity_id': 'media_player.livingroom_tv'} 
+        Data_json: {"button": "MUTE", "entity_id": "media_player.livingroom_tv"} 
   - Button:
     Name: Main Menu
     Icon: placeholder
@@ -191,7 +191,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'UP', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "UP", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Down
     Icon: placeholder
@@ -200,7 +200,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'DOWN', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "DOWN", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Left
     Icon: placeholder
@@ -209,7 +209,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'LEFT', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "LEFT", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Right
     Icon: placeholder
@@ -218,7 +218,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'RIGHT', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "RIGHT", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Enter
     Icon: placeholder
@@ -227,7 +227,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'ENTER', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "ENTER", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input AppMenu
     Icon: placeholder
@@ -236,7 +236,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'HOME', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "HOME", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Back
     Icon: placeholder
@@ -245,7 +245,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'BACK', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "BACK", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Exit
     Icon: placeholder
@@ -254,7 +254,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'EXIT', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "EXIT", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Refresh Display
     Icon: placeholder
@@ -271,7 +271,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'POWER', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "POWER", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Menu
     Icon: placeholder
@@ -280,7 +280,7 @@ Buttons:
       - Action:
         Type: HAService
         Service: webostv.button
-        Data_json: {'button': 'MENU', 'entity_id': 'media_player.livingroom_tv'}
+        Data_json: {"button": "MENU", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Livingroom Lights
     Icon: placeholder
@@ -289,7 +289,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_select
-        Data: 'light.livingroom_all_lights'
+        Data: "light.livingroom_all_lights"
   - Button:
     Name: Kitchen Lights
     Icon: placeholder
@@ -298,7 +298,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_select
-        Data: 'light.kitchen_and_dining_room_all_lights'
+        Data: "light.kitchen_and_dining_room_all_lights"
   - Button:
     Name: Master Bedroom Lights
     Icon: placeholder
@@ -307,7 +307,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_select
-        Data: 'light.master_bedroom_all_lights'
+        Data: "light.master_bedroom_all_lights"
   - Button:
     Name: Outside Lights
     Icon: placeholder
@@ -316,7 +316,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_select
-        Data: 'light.outside_lights'  
+        Data: "light.outside_lights"  
   - Button:
     Name: Lights Off
     Icon: placeholder

@@ -18,7 +18,7 @@ sed -i 's/unsigned char/extern const unsigned char/g' *.cpp
 
 for i in $(ls -v *.cpp | grep -v "graphics.h"); do
   charname=$(echo "$i" | sed 's/\.cpp//g')
-  echo "extern const unsigned char * ${charname}_bmp;"
+  echo "extern const unsigned char ${charname}_bmp;"
 done > ../../graphics.h
 
 cd ..

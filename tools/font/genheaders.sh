@@ -17,7 +17,7 @@ cd output
 
 for i in src/font/lcase/*.cpp src/font/ucase/*.cpp src/font/symbols/*.cpp; do
   charname=$(basename $i | sed 's/\.cpp//g')
-  echo "extern const unsigned char * __${charname}_bmp;"
+  echo "extern const unsigned char __${charname}_bmp;"
 done > font.h
 
 echo "const unsigned char* charmap[] = {" >> font.h
@@ -26,7 +26,7 @@ do
   hex=$(printf '%x' $i)
   if find -name "$hex.cpp" | grep "." > /dev/null 2>&1
   then
-    echo "__${hex}_bmp," >> font.h
+    echo "&__${hex}_bmp," >> font.h
   else
     echo "0," >> font.h
   fi

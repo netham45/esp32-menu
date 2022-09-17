@@ -1,8 +1,6 @@
 #include <arduino.h>
 #include "menu.h"
 
-
-
 button *displaybuttons[MENU_ROWS * MENU_COLUMNS];
 
 RTC_DATA_ATTR uint8_t curMenuIndex = 11;
@@ -92,7 +90,8 @@ void drawMenu()
             index = (row * MENU_COLUMNS) + col;
             if (displaybuttons[index])
             {
-                drawIcon(displaybuttons[index]->iconptr, 17 + (col * 100), 48 + (row * 100));
+                Serial.printf("placeholder: %p, &placeholder: %p\n",placeholder_bmp,&placeholder_bmp);
+                drawIcon(&placeholder_bmp, 17 + (col * 100), 48 + (row * 100));
                 drawString(5 + (col * 100), 118 + (row * 100), displaybuttons[index]->label, ACEP_COLOR_BLACK);
                 drawRect(2 + (col * 100), 94, 38 + (row * 100), 94, ACEP_COLOR_BLACK);
             }
@@ -226,7 +225,7 @@ void doButtonActions(uint8_t buttonIndex)
                     light_brightness = 0;
                 ha_light_set_state(lightName, true, light_red, light_green, light_blue, light_white, light_brightness);
             }
-            else
+            else 
             {
                 Serial.printf("Unknown Native Command: %s\n", displaybuttons[buttonIndex]->actions[i].data.native.command);
             }

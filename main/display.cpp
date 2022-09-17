@@ -2,7 +2,6 @@
 #include "Adafruit_EPD.h"
 #include "display.h"
 #include "font.h"
-#include "src/graphics/graphics.h"
 
 Adafruit_ACEP *display = 0;
 
@@ -139,7 +138,7 @@ void bmpDraw(const unsigned char *bmpFile, uint32_t bmpFileLength, int16_t x, in
     Serial.println("Invalid BMP Magic");
 }
 
-void drawIcon(const unsigned char* icon, uint16_t X, uint16_t Y)
+void drawIcon(const unsigned char *icon, uint16_t X, uint16_t Y)
 {
   bmpDraw(icon, 0, X, Y);
 }

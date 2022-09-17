@@ -1,6 +1,7 @@
 #ifndef display_h
 #define display_h
 #include "Adafruit_EPD.h"
+#include "graphics.h"
 
 void display_setup();
 void bmpDraw(const unsigned char *bmpFile, uint32_t bmpFileLength, int16_t x, int16_t y, uint8_t overrideColor = 255);

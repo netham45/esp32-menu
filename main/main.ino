@@ -11,7 +11,7 @@
 #include "secrets.h"
 
 Adafruit_TSC2007 touch;
-
+ 
 void normalizeTouch(uint16_t *x, uint16_t *y)
 {
   uint16_t top = 3830;
@@ -45,7 +45,7 @@ void setup()
 
   WiFi.mode(WIFI_STA);
   WiFi.config(local_IP, gateway, subnet);
-  WiFi.begin(wiFI_SSID, WIFI_PASS);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
 
   uint16_t x, y, z1, z2;
   touch.read_touch(&y, &x, &z1, &z2); // Swap y,x because screen is rotated.

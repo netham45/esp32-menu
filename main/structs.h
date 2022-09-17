@@ -4,9 +4,8 @@
 
 struct sequence
 {
-    const char* _name;
+    const char *_name;
     const int length;
-    
     const char **entries;
 };
 
@@ -20,30 +19,30 @@ enum actionType
 };
 
 struct action_haservice
-{    
-    const char* service;
-    const char* target_json;
-    const char* data_json;
+{
+    const char *service;
+    const char *target_json;
+    const char *data_json;
 };
 
 struct action_url
 {
-    const char* url;
+    const char *url;
 };
 
 struct action_native
 {
-    const char* command;
-    const char* data;
+    const char *command;
+    const char *data;
 };
 struct action_jump
 {
-    const char* destination;
+    const char *destination;
 };
 
 struct action_all
 {
-	  const char* data;
+    const char *data;
 };
 
 union actionData
@@ -52,7 +51,7 @@ union actionData
     struct action_url url;
     struct action_native native;
     struct action_jump jump;
-	  struct action_all all;
+    struct action_all all;
 };
 
 struct action
@@ -63,20 +62,20 @@ struct action
 
 struct button
 {
-    const char* _name;
-    const char* icon;
-    const unsigned char* iconptr;
-    const char* label;
+    const char *_name;
+    const char *icon;
+    const unsigned char *iconptr;
+    const char *label;
     const int numActions;
     const struct action *actions;
 };
 
 struct menu
 {
-    const char* _name;
-    const char* icon;
-    const unsigned char* iconptr;
-    const char* label;
+    const char *_name;
+    const char *icon;
+    const unsigned char *iconptr;
+    const char *label;
     const struct sequence buttons;
 };
 

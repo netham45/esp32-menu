@@ -1,7 +1,7 @@
 #!/usr/bin/python3.9
-import yaml
+import yaml,sys
 
-print('#include "graphics/graphics.h"')
+print('#include "graphics.h"')
 print('#include "structs.h"')
 
 with open('theyaml.yaml', 'r') as file:
@@ -21,7 +21,7 @@ for Menu in yamldata["Menus"]:
       buttonList = buttonList + '"{}",'.format(Button)
   print("const char* entries_{}[] = {{ {} }};".format(entry_count,buttonList))
   print('const struct sequence sequence_{} = {{ "dummyname", {}, entries_{}}};'.format(sequence_count,button_count,entry_count))
-  print('const struct menu menu_{} = {{"{}","{}",{}_bmp,"{}",sequence_{}}};'.format(menu_count,Menu['Name'],Menu['Icon'],Menu['Icon'],Menu['Label'],sequence_count))
+  print('const struct menu menu_{} = {{"{}","{}",&{}_bmp,"{}",sequence_{}}};'.format(menu_count,Menu['Name'],Menu['Icon'],Menu['Icon'],Menu['Label'],sequence_count))
   entry_count += 1
   sequence_count += 1
   menu_count += 1
@@ -34,7 +34,7 @@ button_count = 0
 action_data_count = 0
 action_data_member_count = 0
 action_count = 0
-actions_count = 0;
+actions_count = 0
 
 for Button in yamldata["Buttons"]:
   buttonList = buttonList + "button_{},".format(button_count)
@@ -49,9 +49,12 @@ for Button in yamldata["Buttons"]:
         Data_json = ""
         Target_json = ""
         if "Data_json" in Action.keys():
-          Data_json = Action['Data_json']
+          Data_json = str(Action['Data_json'])
         if "Target_json" in Action.keys():
-          Target_json = Action['Target_json']
+          Target_json = str(Action['Target_json'])
+        print("Data_json {}".format(Data_json),file=sys.stderr)
+        Data_json = str(Data_json).replace("'",'\\"')
+        print("Data_json {}".format(Data_json),file=sys.stderr)
         print('const struct action_haservice action_data_member_{} = {{ "{}", "{}", "{}" }};'.format(action_data_member_count,Action['Service'],Target_json,Data_json))
         print('const union actionData action_data_{} = {{.haservice = action_data_member_{} }};'.format(action_data_count,action_data_member_count))
       elif Action['Type'] == "Jump":
@@ -80,7 +83,7 @@ for Button in yamldata["Buttons"]:
       action_count += 1
       button_action_count += 1
   print('const struct action actions_{}[] = {{ {} }};'.format(actions_count,actionList))
-  print('const struct button button_{} = {{ "{}", "{}", {}_bmp, "{}", {}, actions_{} }};'.format(button_count,Button['Name'],Button['Icon'],Button['Icon'],Button['Label'],button_action_count,actions_count))
+  print('const struct button button_{} = {{ "{}", "{}", &{}_bmp, "{}", {}, actions_{} }};'.format(button_count,Button['Name'],Button['Icon'],Button['Icon'],Button['Label'],button_action_count,actions_count))
   actions_count += 1
   button_count += 1
 print('struct button buttons[] = {{ {} }};'.format(buttonList))
