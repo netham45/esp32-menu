@@ -1,0 +1,431 @@
+Menus:
+  - Menu:
+    Name: Main Menu
+    Icon: placeholder
+    Label: Main Menu
+    Buttons:
+      - Xbox
+      - Xbox One
+      - Playstation 2
+      - Genesis
+      - Dreamcast
+      - Switch
+      - Wii U
+      - SNES
+      - N64
+      - PC
+      - TV
+  - Menu:
+    Name: Xbox
+    Icon: xbox
+    Label: Original Xbox
+  - Menu:
+    Name: Xbox One
+    Icon: xboxone
+    Label: Xbox One
+  - Menu:
+    Name: Playstation 2
+    Icon: ps2
+    Label: Playstation 2
+    Buttons:
+      - RebootPS2
+  - Menu:
+    Name: Genesis
+    Icon: sega
+    Label: Genesis
+    Buttons:
+      - RebootGenesis
+  - Menu:
+    Name: Dreamcast
+    Icon: dreamcast
+    Label: Dreamcast
+    Buttons:
+      - RebootDreamcast
+  - Menu:
+    Name: Switch
+    Icon: switch
+    Label: Switch
+  - Menu:
+    Name: Wii U
+    Icon: wiiu
+    Label: Wii U/Wii/Gamecube
+  - Menu:
+    Name: SNES
+    Icon: snes
+    Label: Super Nintendo Entertainment System
+    Buttons:
+      - RebootSNES
+  - Menu:
+    Name: N64
+    Icon: n64
+    Label: Nintendo 64
+    Buttons:
+      - RebootN64
+  - Menu:
+    Name: PC
+    Icon: placeholder
+    Label: PC
+  - Menu:
+    Name: TV
+    Icon: placeholder
+    Label: LG C1
+    Buttons:
+      - TV Power Toggle
+      - TV Input Up
+      - TV Input Down
+      - TV Input Left
+      - TV Input Right
+      - TV Input Enter
+      - TV Menu
+      - TV Input AppMenu
+      - TV Input Back
+      - TV Input Exit
+      - Volume Up
+      - Volume Down
+      - Volume Mute
+      - Refresh Display
+      - Control Lights
+  - Menu:
+    Name: Lights
+    Icon: placeholder
+    Label: Toggle Lights
+    Buttons:
+      - Livingroom Lights
+      - Kitchen Lights
+      - Master Bedroom Lights
+      - Outside Lights
+      - Lights Off
+      - Lights On
+      - Lights Red Up
+      - Lights Red Down
+      - Lights Green Up
+      - Lights Green Down
+      - Lights Blue Up
+      - Lights Blue Down
+      - Lights White Up
+      - Lights White Down
+      - Lights Brightness Up
+      - Lights Brightness Down
+      - Control TV
+Buttons:
+  - Button:
+    Name: Volume Up
+    Icon: placeholder
+    Label: Volume Up
+    Actions:
+      - Action:
+        Type: HAService
+        Service: media_player.volume_up
+        Data_json: {'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: Volume Down
+    Icon: placeholder
+    Label: Volume Down
+    Actions:
+      - Action:
+        Type: HAService
+        Service: media_player.volume_down
+        Data_json: {'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: Volume Mute
+    Icon: placeholder
+    Label: Volume Mute
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'MUTE', 'entity_id': 'media_player.livingroom_tv'} 
+  - Button:
+    Name: Main Menu
+    Icon: placeholder
+    Label: Main Menu
+    Actions:
+      - Action:
+        Type: Jump
+        Destination: Main Menu
+  - Button:
+    Name: RebootPS2
+    Icon: placeholder
+    Label: Reboot Playstation 2
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.rebootps2
+  - Button:
+    Name: RebootGenesis
+    Icon: placeholder
+    Label: Reboot Genesis
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.rebootgenesis
+  - Button:
+    Name: RebootSNES
+    Icon: placeholder
+    Label: Reboot Super Nintendo Entertainment System
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.rebootsnes
+  - Button:
+    Name: RebootN64
+    Icon: placeholder
+    Label: Reboot Nintendo 64
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.rebootn64
+  - Button:
+    Name: RebootDreamcast
+    Icon: placeholder
+    Label: Reboot Dreamcast
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.rebootps2
+  - Button:
+    Name: TV Input Up
+    Icon: placeholder
+    Label: Up
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'UP', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input Down
+    Icon: placeholder
+    Label: Down
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'DOWN', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input Left
+    Icon: placeholder
+    Label: Left
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'LEFT', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input Right
+    Icon: placeholder
+    Label: Right
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'RIGHT', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input Enter
+    Icon: placeholder
+    Label: Enter
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'ENTER', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input AppMenu
+    Icon: placeholder
+    Label: App Menu
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'HOME', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input Back
+    Icon: placeholder
+    Label: Back
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'BACK', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Input Exit
+    Icon: placeholder
+    Label: Exit
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'EXIT', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: Refresh Display
+    Icon: placeholder
+    Label: Redraw
+    Actions:
+      - Action:
+        Type: Native
+        Command: redraw
+  - Button:
+    Name: TV Power Toggle
+    Icon: placeholder
+    Label: Power
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'POWER', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: TV Menu
+    Icon: placeholder
+    Label: Menu
+    Actions:
+      - Action:
+        Type: HAService
+        Service: webostv.button
+        Data_json: {'button': 'MENU', 'entity_id': 'media_player.livingroom_tv'}
+  - Button:
+    Name: Livingroom Lights
+    Icon: placeholder
+    Label: Livingroom
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_select
+        Data: 'light.livingroom_all_lights'
+  - Button:
+    Name: Kitchen Lights
+    Icon: placeholder
+    Label: Kitchen
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_select
+        Data: 'light.kitchen_and_dining_room_all_lights'
+  - Button:
+    Name: Master Bedroom Lights
+    Icon: placeholder
+    Label: Mstr Bdrm
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_select
+        Data: 'light.master_bedroom_all_lights'
+  - Button:
+    Name: Outside Lights
+    Icon: placeholder
+    Label: Outside
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_select
+        Data: 'light.outside_lights'  
+  - Button:
+    Name: Lights Off
+    Icon: placeholder
+    Label: Turn Off
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_off
+  - Button:
+    Name: Lights On
+    Icon: placeholder
+    Label: Turn On
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_on
+  - Button:
+    Name: Lights Green Up
+    Icon: placeholder
+    Label: Green +
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_green_up
+  - Button:
+    Name: Lights Green Down
+    Icon: placeholder
+    Label: Green -
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_green_down
+  - Button:
+    Name: Lights Red Up
+    Icon: placeholder
+    Label: Red +
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_red_up
+  - Button:
+    Name: Lights Red Down
+    Icon: placeholder
+    Label: Red -
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_red_down
+  - Button:
+    Name: Lights Blue Up
+    Icon: placeholder
+    Label: Blue +
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_blue_up
+  - Button:
+    Name: Lights Blue Down
+    Icon: placeholder
+    Label: Blue -
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_blue_down
+  - Button:
+    Name: Lights White Up
+    Icon: placeholder
+    Label: White +
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_white_up
+  - Button:
+    Name: Lights White Down
+    Icon: placeholder
+    Label: White -
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_white_down
+  - Button:
+    Name: Lights Brightness Up
+    Icon: placeholder
+    Label: Brightness +
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_brightness_up
+  - Button:
+    Name: Lights Brightness Down
+    Icon: placeholder
+    Label: Brightness -
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_brightness_down
+  - Button:
+    Name: Control Lights
+    Icon: placeholder
+    Label: Lights
+    Actions:
+      - Action:
+        Type: Jump
+        Destination: Lights
+  - Button:
+    Name: Control TV
+    Icon: placeholder
+    Label: TV
+    Actions:
+      - Action:
+        Type: Jump
+        Destination: TV
