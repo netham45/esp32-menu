@@ -52,9 +52,7 @@ for Button in yamldata["Buttons"]:
           Data_json = str(Action['Data_json'])
         if "Target_json" in Action.keys():
           Target_json = str(Action['Target_json'])
-        print("Data_json {}".format(Data_json),file=sys.stderr)
         Data_json = str(Data_json).replace("'",'\\"')
-        print("Data_json {}".format(Data_json),file=sys.stderr)
         print('const struct action_haservice action_data_member_{} = {{ "{}", "{}", "{}" }};'.format(action_data_member_count,Action['Service'],Target_json,Data_json))
         print('const union actionData action_data_{} = {{.haservice = action_data_member_{} }};'.format(action_data_count,action_data_member_count))
       elif Action['Type'] == "Jump":

@@ -39,7 +39,7 @@ void harequest(const char *service, const char *target_json, const char *data_js
         Serial.printf("Request timeout\n");
         return;
     }
-    http.setHttpResponseTimeout(1000);
+    http.setHttpResponseTimeout(4000);
     http.setTimeout(100);
     http.sendHeader("Content-Type", "application/json");
     http.sendHeader("authorization", HA_TOKEN);

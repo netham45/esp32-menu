@@ -80,9 +80,15 @@ Menus:
       - TV Input AppMenu
       - TV Input Back
       - TV Input Exit
-      - Volume Up
-      - Volume Down
-      - Volume Mute
+      - TV Input Xbox
+      - TV Input Xbox One
+      - TV Input Genesis
+      - TV Input Dreamcast
+      - TV Input Switch
+      - TV Input Wii U
+      - TV Input SNES
+      - TV Input N64
+      - TV Input PC
       - Refresh Display
       - Control Lights
   - Menu:
@@ -107,10 +113,19 @@ Menus:
       - Lights Brightness Up
       - Lights Brightness Down
       - Control TV
+  - Menu:
+    Name: TopBar
+    Icon: placeholder
+    Label: TopBar
+    Buttons:
+      - Volume Up
+      - Volume Down
+      - Volume Mute
+      - Main Menu
 Buttons:
   - Button:
     Name: Volume Up
-    Icon: placeholder
+    Icon: volumeup
     Label: Volume Up
     Actions:
       - Action:
@@ -119,7 +134,7 @@ Buttons:
         Data_json: {"entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Volume Down
-    Icon: placeholder
+    Icon: volumedown
     Label: Volume Down
     Actions:
       - Action:
@@ -128,7 +143,7 @@ Buttons:
         Data_json: {"entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Volume Mute
-    Icon: placeholder
+    Icon: mute
     Label: Volume Mute
     Actions:
       - Action:
@@ -137,12 +152,12 @@ Buttons:
         Data_json: {"button": "MUTE", "entity_id": "media_player.livingroom_tv"} 
   - Button:
     Name: Main Menu
-    Icon: placeholder
+    Icon: backarrow
     Label: Main Menu
     Actions:
       - Action:
         Type: Jump
-        Destination: Main Menu
+        Destination: TV
   - Button:
     Name: RebootPS2
     Icon: placeholder
@@ -429,3 +444,84 @@ Buttons:
       - Action:
         Type: Jump
         Destination: TV
+  - Button:
+    Name: TV Input Xbox
+    Icon: xbox
+    Label: Xbox/PS2
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_2_and_receiver_to_hdmi_3
+  - Button:
+    Name: TV Input Xbox One
+    Icon: xboxone
+    Label: Xbox One
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_2_and_receiver_to_hdmi_4
+  - Button:
+    Name: TV Input PS2
+    Icon: playstation
+    Label: PS2
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_2_and_receiver_to_hdmi_3
+  - Button:
+    Name: TV Input Genesis
+    Icon: sega
+    Label: Genesis
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_3_retrotink_and_av_switcher_to_av4
+  - Button:
+    Name: TV Input Dreamcast
+    Icon: dreamcast
+    Label: Dreamcast
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_3_retrotink_and_av_switcher_to_av3
+  - Button:
+    Name: TV Input Switch
+    Icon: switch
+    Label: Switch
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_2_and_receiver_to_hdmi_1
+  - Button:
+    Name: TV Input Wii U
+    Icon: wiiu
+    Label: Wii U
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_2_and_receiver_to_hdmi_2
+  - Button:
+    Name: TV Input SNES
+    Icon: snes
+    Label: SNES
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_3_retrotink_and_av_switcher_to_av2
+  - Button:
+    Name: TV Input N64
+    Icon: n64
+    Label: N64
+    Actions:
+      - Action:
+        Type: HAService
+        Service: script.switch_tv_to_hdmi_3_retrotink_and_av_switcher_to_av1
+  - Button:
+    Name: TV Input PC
+    Icon: windows
+    Label: PC
+    Actions:
+      - Action:
+        Type: HAService
+        Service: media_player.select_source
+        Data_json: {"source":"PC", "entity_id": "media_player.livingroom_tv"}

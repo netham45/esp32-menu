@@ -3,21 +3,19 @@
 #include "display.h"
 #include "font.h"
 
-Adafruit_ACEP *display = 0;
+Adafruit_EPD *display = 0;
 
 #define EPD_CS 26
 #define EPD_DC 25
-#define SRAM_CS -1
 #define EPD_RESET 17
 #define EPD_BUSY 27
 #define EPD_MOSI 23
 
 void display_setup()
 {
-  display = new Adafruit_ACEP(600, 448, EPD_DC, EPD_RESET, EPD_CS, SRAM_CS, EPD_BUSY);
+  display = new Adafruit_EPD(600, 448, EPD_DC, EPD_RESET, EPD_CS, EPD_BUSY);
 
   display->begin();
-  display->setRotation(0);
   display->clearBuffer();
 }
 
@@ -49,13 +47,13 @@ uint32_t read32(const unsigned char *bmpFile)
 void drawHorizLine(uint16_t X1, uint16_t X2, uint16_t Y, uint16_t color)
 {
   for (uint16_t X = X1; X != X2; X1 < X2 ? X++ : X--)
-    display->writePixel(X, Y, color);
+    display->drawPixel(X, Y, color);
 }
 
 void drawVertLine(uint16_t X, uint16_t Y1, uint16_t Y2, uint16_t color)
 {
   for (uint16_t Y = Y1; Y != Y2; Y1 < Y2 ? Y++ : Y--)
-    display->writePixel(X, Y, color);
+    display->drawPixel(X, Y, color);
 }
 
 void drawRect(uint16_t X, uint16_t Width, uint16_t Y, uint16_t Height, uint16_t color)
@@ -78,7 +76,6 @@ void bmpDraw(const unsigned char *bmpFile, uint32_t bmpFileLength, int16_t x, in
   uint8_t twoPixels, pixelcolor;
   bool firstPixel;
   float bytesPerRow;
-
   buffPos = 0;
 
   if (read16(bmpFile) == 0x4D42)
@@ -103,7 +100,7 @@ void bmpDraw(const unsigned char *bmpFile, uint32_t bmpFileLength, int16_t x, in
       bmpHeight = abs(bmpHeight); // Get abs(bmpHeight) it in case it's negative (flipped)
       x2 = x + bmpWidth - 1;      // Right X bound for the bitmap
       y2 = y + bmpHeight - 1;     // Bottom Y bound for the bitmap
-
+      Serial.printf("Drawing bmp x,y %i,%i width,height %i,%i\n",x,y,x2,y2);
       for (row = 0; row < bmpHeight; row++)
       {
         if (flip)
@@ -127,7 +124,7 @@ void bmpDraw(const unsigned char *bmpFile, uint32_t bmpFileLength, int16_t x, in
             pixelcolor = ACEP_COLOR_WHITE;
           if (overrideColor < 7 && pixelcolor != 1) // Draw every non-white pixel as overrideColor (Used for drawing strings)
             pixelcolor = overrideColor;
-          display->writePixel(x + col, y + row, pixelcolor);
+          display->drawPixel(x + col, y + row, pixelcolor);
         }
       }
     }
@@ -158,7 +155,7 @@ void drawString(uint16_t X, uint16_t Y, const char *string, uint8_t color)
 
 void setPixel(uint16_t X, uint16_t Y, uint8_t color)
 {
-  display->writePixel(X, Y, color);
+  display->drawPixel(X, Y, color);
 }
 
 void updateDisplay()
