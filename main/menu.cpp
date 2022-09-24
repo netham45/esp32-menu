@@ -5,6 +5,7 @@
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include "graphics.h"
 button *displaybuttons[MENU_ROWS * MENU_COLUMNS];
 
 button *topbuttons[TOPBUTTONCOUNT];
@@ -23,7 +24,6 @@ uint16_t x = 0, y = 0, z1 = 0, z2 = 0;
 
 struct hotspot hotspots[MAX_HOTSPOTS];
 uint8_t numHotspots = 0;
-
 
 void dumpConfig()
 {
@@ -72,26 +72,25 @@ button *getButtonFromName(const char *name)
         if (strcmp(name, buttons[i]._name) == 0)
             return &buttons[i];
     }
-    Serial.printf("Could not find button %s\n",name);
+    Serial.printf("Could not find button %s\n", name);
     return 0;
 }
 bool otaSetup = false;
 
 void handleOTA()
 {
-  if (WiFi.waitForConnectResult() != WL_CONNECTED)
-    return;
-  if (otaSetup)
-  {
-    ArduinoOTA.handle();
-    
-  }
-  else
-  {
-    otaSetup = true;
-    ArduinoOTA
-        .onStart([]()
-                {
+    if (WiFi.waitForConnectResult() != WL_CONNECTED)
+        return;
+    if (otaSetup)
+    {
+        ArduinoOTA.handle();
+    }
+    else
+    {
+        otaSetup = true;
+        ArduinoOTA
+            .onStart([]()
+                     {
             String type;
             if (ArduinoOTA.getCommand() == U_FLASH)
                 type = "sketch";
@@ -100,21 +99,21 @@ void handleOTA()
 
             // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
             Serial.println("Start updating " + type); })
-        .onEnd([]()
-                { Serial.println("\nEnd"); })
-        .onProgress([](unsigned int progress, unsigned int total)
-                    { Serial.printf("Progress: %u%%\r", (progress / (total / 100))); })
-        .onError([](ota_error_t error)
-                {
+            .onEnd([]()
+                   { Serial.println("\nEnd"); })
+            .onProgress([](unsigned int progress, unsigned int total)
+                        { Serial.printf("Progress: %u%%\r", (progress / (total / 100))); })
+            .onError([](ota_error_t error)
+                     {
             Serial.printf("Error[%u]: ", error);
             if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
             else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
             else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
             else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
             else if (error == OTA_END_ERROR) Serial.println("End Failed"); });
-    ArduinoOTA.setPort(3232);
-    ArduinoOTA.begin();
-  }
+        ArduinoOTA.setPort(3232);
+        ArduinoOTA.begin();
+    }
 }
 
 void setupTouch()
@@ -139,10 +138,8 @@ void setupMenu()
     updateMenu(false);
 }
 
-void updateMenu(bool renderMenu)
+void updateBody(bool renderMenu)
 {
-    memset(hotspots, 0, sizeof(hotspot) * MAX_HOTSPOTS);
-    numHotspots = 0;
     for (int row = 0; row < MENU_ROWS; row++)
     {
         for (int col = 0; col < MENU_COLUMNS; col++)
@@ -168,7 +165,102 @@ void updateMenu(bool renderMenu)
             }
         }
     }
+    if (!renderMenu)
+        return;
+    for (int row = 0; row < MENU_ROWS; row++)
+    {
+        for (int col = 0; col < MENU_COLUMNS; col++)
+        {
+            uint8_t index = (row * MENU_COLUMNS) + col;
+            if (displaybuttons[index])
+            {
+                drawIcon(displaybuttons[index]->iconptr, 17 + (col * 100), 48 + (row * 100));
+                drawString(5 + (col * 100), 118 + (row * 100), displaybuttons[index]->label, ACEP_COLOR_BLACK);
+                drawRect(2 + (col * 100), 94, 38 + (row * 100), 94, ACEP_COLOR_BLACK);
+            }
+        }
+    }
+}
 
+void updateColorSelectWidget(bool renderMenu,uint16_t left, uint16_t top)
+{
+    const uint8_t widgetButtonCount = 6;
+    const char* widgetButtons[widgetButtonCount] = { "red_slider", "green_slider", "blue_slider", "white_slider", "brightness_slider", "colortemp_slider"};
+    
+
+    for (int i=0;i<widgetButtonCount;i++)
+    {
+        struct button *widgetButton = getButtonFromName(widgetButtons[i]);
+
+        hotspots[numHotspots].x = left + 120;
+        hotspots[numHotspots].y = top;
+        hotspots[numHotspots].width = 240;
+        hotspots[numHotspots].height = 32;
+        hotspots[numHotspots].numActions = widgetButton->numActions;
+        hotspots[numHotspots].actions = widgetButton->actions;
+        numHotspots++;
+        if (renderMenu)
+        {
+            drawIcon(widgetButton->iconptr, left + 120, top);
+            drawString(left, top + 10, widgetButton->label, 0);
+        }
+        top += 34;
+    }    
+}
+
+
+void updateBodyLights(bool renderMenu)
+{
+    for (int row = 0; row < MENU_ROWS - 2; row++)
+    {
+        for (int col = 0; col < MENU_COLUMNS; col++)
+        {
+            uint8_t i = (row * MENU_COLUMNS) + col;
+            if (menus[curMenuIndex].numButtons > i)
+            {
+                displaybuttons[i] = getButtonFromName(menus[curMenuIndex].buttons[i]);
+                if (displaybuttons[i])
+                {
+                    hotspots[numHotspots].x = 2 + (col * 100);
+                    hotspots[numHotspots].y = 38 + (row * 100);
+                    hotspots[numHotspots].width = 94;
+                    hotspots[numHotspots].height = 94;
+                    hotspots[numHotspots].numActions = displaybuttons[i]->numActions;
+                    hotspots[numHotspots].actions = displaybuttons[i]->actions;
+                    numHotspots++;
+                }
+            }
+            else
+            {
+                displaybuttons[i] = 0;
+            }
+        }
+    }
+
+    
+    uint16_t top = 6 + 38 + 94 + (1 * 100);
+    uint16_t left = 6;
+    updateColorSelectWidget(renderMenu,left,top);
+
+    if (!renderMenu)
+        return;
+    for (int row = 0; row < MENU_ROWS - 2; row++)
+    {
+        for (int col = 0; col < MENU_COLUMNS; col++)
+        {
+            uint8_t index = (row * MENU_COLUMNS) + col;
+            if (displaybuttons[index])
+            {
+                drawIcon(displaybuttons[index]->iconptr, 17 + (col * 100), 48 + (row * 100));
+                drawString(5 + (col * 100), 118 + (row * 100), displaybuttons[index]->label, ACEP_COLOR_BLACK);
+                drawRect(2 + (col * 100), 94, 38 + (row * 100), 94, ACEP_COLOR_BLACK);
+            }
+        }
+    }
+}
+
+void updateTopBar(bool renderMenu)
+{
     int topbarindex = getMenuIndexFromName("TopBar");
     if (topbarindex != -1)
     {
@@ -177,7 +269,7 @@ void updateMenu(bool renderMenu)
             if (menus[topbarindex].numButtons > i)
             {
                 topbuttons[i] = getButtonFromName(menus[topbarindex].buttons[i]);
-                hotspots[numHotspots].x = 600 - 36 * (i+1);
+                hotspots[numHotspots].x = 600 - 36 * (i + 1);
                 hotspots[numHotspots].y = 0;
                 hotspots[numHotspots].width = 32;
                 hotspots[numHotspots].height = 32;
@@ -199,24 +291,8 @@ void updateMenu(bool renderMenu)
     if (!renderMenu)
         return;
 
-    clearDisplay();
-    drawHorizLine(0, 640, 35, ACEP_COLOR_BLACK);
-
     drawString(0, 9, menus[curMenuIndex]._name, 0);
-    for (int row = 0; row < MENU_ROWS; row++)
-    {
-        for (int col = 0; col < MENU_COLUMNS; col++)
-        {
-            uint8_t index = (row * MENU_COLUMNS) + col;
-            if (displaybuttons[index])
-            {
-                drawIcon(displaybuttons[index]->iconptr, 17 + (col * 100), 48 + (row * 100));
-                drawString(5 + (col * 100), 118 + (row * 100), displaybuttons[index]->label, ACEP_COLOR_BLACK);
-                drawRect(2 + (col * 100), 94, 38 + (row * 100), 94, ACEP_COLOR_BLACK);
-            }
-        }
-    }
-
+    drawHorizLine(0, 640, 35, ACEP_COLOR_BLACK);
     for (int i = 0; i < TOPBUTTONCOUNT; i++)
     {
         if (topbuttons[i])
@@ -224,6 +300,25 @@ void updateMenu(bool renderMenu)
             drawIcon(topbuttons[i]->iconptr, 600 - 36 * (i + 1), 0);
         }
     }
+}
+
+void updateMenu(bool renderMenu)
+{
+    memset(hotspots, 0, sizeof(hotspot) * MAX_HOTSPOTS);
+    numHotspots = 0;
+    if (renderMenu)
+    {
+        clearDisplay();
+    }
+    if (strcmp(menus[curMenuIndex]._name, "Lights") == 0)
+    {
+        updateBodyLights(renderMenu);
+    }
+    else
+    {
+        updateBody(renderMenu);
+    }
+    updateTopBar(renderMenu);
 }
 
 uint8_t getMenuIndexFromName(const char *name)
@@ -240,11 +335,11 @@ bool checkHotspot(uint16_t x, uint16_t y, bool _doActions)
     bool foundHotspot = false;
     for (int i = 0; i < numHotspots; i++)
     {
-        if (x > hotspots[i].x && x < (hotspots[i].x + hotspots[i].width) && y > hotspots[i].y && y < (hotspots[i].y + hotspots[i].width))
+        if (x > hotspots[i].x && x < (hotspots[i].x + hotspots[i].width) && y > hotspots[i].y && y < (hotspots[i].y + hotspots[i].height))
         {
 
             if (_doActions)
-                taskDoActions(hotspots[i].actions, hotspots[i].numActions,x-hotspots[i].x,y-hotspots[i].y);
+                taskDoActions(hotspots[i].actions, hotspots[i].numActions, x - hotspots[i].x, y - hotspots[i].y);
             foundHotspot = true;
         }
     }
@@ -284,13 +379,13 @@ void processTouchLoop()
         handleOTA();
         if (!firstRead)
         {
-            touch.read_touch(&y, &x, &z1, &z2);  // Swap y,x because screen is rotated.
+            touch.read_touch(&y, &x, &z1, &z2); // Swap y,x because screen is rotated.
         }
         else
         {
             firstRead = false;
         }
-        if (x == 0 || y == 0)
+        if (x == 0 || y == 0 || z1 < 30)
         {
             buttonReleased = true;
             awakeFor += 10;

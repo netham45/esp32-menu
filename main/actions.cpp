@@ -56,22 +56,6 @@ void harequest(const char *service, const char *target_json, const char *data_js
     Serial.printf("Got response: %i\n", http.responseStatusCode());
 }
 
-void ha_light_set_color(bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
-{
-    while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
-    {
-        vTaskDelay(10);
-    }
-    char _lightName[64];
-    strcpy(_lightName, lightName);
-    light_red = red;
-    light_green = green;
-    light_blue = blue;
-    light_white = white;
-    light_brightness = brightness;
-    xSemaphoreGive(lightOptions_mux);
-    ha_light_send_state(_lightName, turnOn, red, green, blue, white, brightness);
-}
 
 void ha_light_send_state(const char *_lightName, bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
 {
@@ -89,6 +73,58 @@ void ha_light_send_state(const char *_lightName, bool turnOn, uint8_t red, uint8
     }
     harequest(service, "", data);
 }
+
+void ha_light_send_state_colortemp(const char *_lightName, uint16_t colorTemp, uint8_t brightness)
+{
+    char service[32];
+    char data[128];
+    strcpy(service, "light.turn_on");
+    sprintf(data, "{\"entity_id\": \"%s\", \"color_temp\": %i, \"brightness\":%i} ", _lightName, colorTemp, brightness);
+
+    harequest(service, "", data);
+}
+
+void ha_light_set_color(bool turnOn, int red, int green, int blue, int white, int brightness)
+{
+    while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
+    {
+        vTaskDelay(10);
+    }
+    char _lightName[64];
+    strcpy(_lightName, lightName);
+    if (red != -1)
+        light_red = red;
+    if (green != -1)
+        light_green = green;
+    if (blue != -1)
+        light_blue = blue;
+    if (white != -1)
+        light_white = white;
+    if (brightness != -1)
+        light_brightness = brightness;
+    red = light_red;
+    green = light_green;
+    blue = light_blue;
+    white = light_white;
+    brightness = light_brightness;
+    xSemaphoreGive(lightOptions_mux);
+    ha_light_send_state(_lightName, turnOn, red, green, blue, white, brightness);
+}
+
+
+void ha_light_set_colortemp(int colortemp)
+{
+    while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
+    {
+        vTaskDelay(10);
+    }
+    char _lightName[64];
+    strcpy(_lightName, lightName);
+    int brightness = light_brightness;
+    xSemaphoreGive(lightOptions_mux);
+    ha_light_send_state_colortemp(_lightName, colortemp, brightness);
+}
+
 void ha_light_add_subtract_color(bool subtract, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
 {
     while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
@@ -165,7 +201,7 @@ void httpRequest()
     Serial.printf("post status: %i\n", http.responseStatusCode());
 }
 
-void taskDoActions(const action *pActions, uint8_t numActions, uint16_t x, uint16_t y)
+void taskDoActions(const action *pActions, uint8_t numActions, int x, int y)
 {
     if (!lightOptions_mux)
     {
@@ -215,63 +251,62 @@ void taskDoActionsDo(void *pParams)
     vTaskDelete(NULL);
 }
 
-void doActions(const action *pActions, uint8_t numActions, uint16_t x, uint16_t y) // x,y are relative to the upper left corner of the hitbox
+void doActions(const action *pActions, uint8_t numActions, int x, int y) // x,y are relative to the upper left corner of the hitbox
 {
-    const action actions = *pActions;
     for (int i = 0; i < numActions; i++)
     {
-        switch (actions.type)
+        switch (pActions[i].type)
         {
         case ACTION_HASERVICE:
             Serial.printf("Running HAService\n");
             char service[64];
             char target_json[64];
             char data_json[64];
-            strcpy(service, actions.data.haservice.service);
-            strcpy(target_json, actions.data.haservice.target_json);
-            strcpy(data_json, actions.data.haservice.data_json);
+            strcpy(service, pActions[i].data.haservice.service);
+            strcpy(target_json, pActions[i].data.haservice.target_json);
+            strcpy(data_json, pActions[i].data.haservice.data_json);
             harequest(service,
                       target_json,
                       data_json);
             break;
         case ACTION_URL:
             Serial.printf("Running URL\n");
-            // httprequest(actions.data.url.url);
+            // httprequest(_action.data.url.url);
             break;
         case ACTION_NATIVE:
-            Serial.printf("Running Native Command %s\n", actions.data.native.command);
-            if (strcmp("redraw", actions.data.native.command) == 0)
+            Serial.printf("Running Native Command %s\n", pActions[i].data.native.command);
+            if (strcmp("redraw", pActions[i].data.native.command) == 0)
             {
                 updateDisplay();
             }
-            else if (strcmp("light_select", actions.data.native.command) == 0)
+            else if (strcmp("light_select", pActions[i].data.native.command) == 0)
             {
-                ha_light_select(actions.data.native.data);
+                ha_light_select(pActions[i].data.native.data);
             }
             // void ha_light_set_state(const char* _lightName, bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
-            else if (strcmp("light_off", actions.data.native.command) == 0)
+            else if (strcmp("light_off", pActions[i].data.native.command) == 0)
             {
                 ha_light_set_color(false, 0, 0, 0, 0, 0);
             }
-            else if (strcmp("light_on", actions.data.native.command) == 0)
+            else if (strcmp("light_on", pActions[i].data.native.command) == 0)
             {
                 ha_light_set_color(true, 0, 0, 0, 0xFF, 0xFF);
             }
-            else if (strcmp("light_rgbw", actions.data.native.command) == 0)
+            else if (strcmp("light_rgbw", pActions[i].data.native.command) == 0)
             {
                 uint32_t hexval;
                 uint8_t *rgbw = (uint8_t *)&hexval;
-                sscanf(actions.data.native.data, "%x", &hexval);
+                sscanf(pActions[i].data.native.data, "%x", &hexval);
 
                 ha_light_set_color(true, rgbw[3], rgbw[2], rgbw[1], rgbw[0], 0xFF);
             }
-            else if (strcmp("light_add_rgbwb", actions.data.native.command) == 0)
+            else if (strcmp("light_add_rgbwb", pActions[i].data.native.command) == 0)
             {
-                Serial.printf("data: %s\n", actions.data.native.data);
+                Serial.printf("data: %s\n", pActions[i].data.native.data);
                 char top8[9] = {0};
                 char bottom2[3] = {0};
-                memcpy(top8, actions.data.native.data, 8);
-                memcpy(bottom2, actions.data.native.data + 8, 2);
+                memcpy(top8, pActions[i].data.native.data, 8);
+                memcpy(bottom2, pActions[i].data.native.data + 8, 2);
                 uint32_t lrgbw;
                 uint8_t *rgbw = (uint8_t *)&lrgbw;
                 uint32_t ibrightness;
@@ -281,12 +316,12 @@ void doActions(const action *pActions, uint8_t numActions, uint16_t x, uint16_t 
                 Serial.printf("(add) Got rgbwb: %x %x %x %x %x\n", rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
                 ha_light_add_subtract_color(false, rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
             }
-            else if (strcmp("light_subtract_rgbwb", actions.data.native.command) == 0)
+            else if (strcmp("light_subtract_rgbwb", pActions[i].data.native.command) == 0)
             {
                 char top8[9] = {0};
                 char bottom2[3] = {0};
-                memcpy(top8, actions.data.native.data, 8);
-                memcpy(bottom2, actions.data.native.data + 8, 2);
+                memcpy(top8, pActions[i].data.native.data, 8);
+                memcpy(bottom2, pActions[i].data.native.data + 8, 2);
                 Serial.printf("top8: %s bottom2: %s\n", top8, bottom2);
                 uint32_t irgbw;
                 uint8_t *rgbw = (uint8_t *)&irgbw;
@@ -297,16 +332,69 @@ void doActions(const action *pActions, uint8_t numActions, uint16_t x, uint16_t 
                 Serial.printf("(Subtract) Got rgbwb: %x %x %x %x %x\n", rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
                 ha_light_add_subtract_color(true, rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
             }
+            else if (strcmp("red_slider", pActions[i].data.native.command) == 0)
+            {
+                uint8_t targetValue = 0;
+                if (x > 0)
+                    targetValue = ((double(x) / 240) * 255);
+                Serial.printf("Setting red to %x\n",targetValue);
+                targetValue = clamp(targetValue, 255, 0);
+                ha_light_set_color(true, targetValue, -1, -1, -1, -1);
+            }
+            else if (strcmp("green_slider", pActions[i].data.native.command) == 0)
+            {
+                uint8_t targetValue = 0;
+                if (x > 0)
+                    targetValue = ((double(x) / 240) * 255);
+                targetValue = clamp(targetValue, 255, 0);
+                ha_light_set_color(true, -1, targetValue, -1, -1, -1);
+            }
+            else if (strcmp("blue_slider", pActions[i].data.native.command) == 0)
+            {
+                uint8_t targetValue = 0;
+                if (x > 0)
+                    targetValue = ((double(x) / 240) * 255);
+                targetValue = clamp(targetValue, 255, 0);
+                ha_light_set_color(true, -1, -1, targetValue, -1, -1);
+            }
+            else if (strcmp("white_slider", pActions[i].data.native.command) == 0)
+            {
+                uint8_t targetValue = 0;
+                if (x > 0)
+                    targetValue = ((double(x) / 240) * 255);
+                targetValue = clamp(targetValue, 255, 0);
+                ha_light_set_color(true, -1, -1, -1, targetValue, -1);
+            }
+            else if (strcmp("brightness_slider", pActions[i].data.native.command) == 0)
+            {
+                uint8_t targetValue = 0;
+                if (x > 0)
+                    targetValue = ((double(x) / 240) * 255);
+                targetValue = clamp(targetValue, 255, 0);
+                ha_light_set_color(true, -1, -1, -1, -1, targetValue);
+            }
+            else if (strcmp("colortemp_slider", pActions[i].data.native.command) == 0)
+            {
+                const uint16_t bottomRange = 153;
+                const uint16_t topRange = 500;
+                const double range = topRange - bottomRange;
+                uint16_t targetValue = 0;
+                if (x > 0)
+                    targetValue = ((double(x) / 240) * range) + bottomRange;
+                //Serial.printf("colortemp: Percent: %i% topRange: %i bottomRange: %i targetValue: %i\n");
+                targetValue = clamp(targetValue, topRange, bottomRange);
+                ha_light_set_colortemp(targetValue);
+            }
             else
             {
-                Serial.printf("Unknown Native Command: %s\n", actions.data.native.command);
+                Serial.printf("Unknown Native Command: %s\n", pActions[i].data.native.command);
             }
 
             // if (strcmp("Command",...) == 0) ...
             break;
         case ACTION_JUMP:
             Serial.printf("Running Jump\n");
-            jumpToMenu(actions.data.jump.destination);
+            jumpToMenu(pActions[i].data.jump.destination);
             break;
         case ACTION_UNSET:
         default:

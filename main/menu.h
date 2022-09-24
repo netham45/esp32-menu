@@ -47,7 +47,7 @@ uint8_t getMenuIndexFromName(const char *name);
 void setupMenu();
 void updateMenu(bool renderMenu);
 bool checkHotspot(uint16_t x, uint16_t y, bool _doActions);
-void jumpToMenu(const char* menuName);
+void jumpToMenu(const char *menuName);
 void normalizeTouch(uint16_t *x, uint16_t *y);
 void processTouchLoop();
 #endif

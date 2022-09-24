@@ -16,7 +16,7 @@ void clearDisplay();
 
 void drawString(uint16_t X, uint16_t Y, const char *string, uint8_t color);
 
-void drawIcon(const unsigned char* icon, uint16_t X, uint16_t Y);
+void drawIcon(const unsigned char *icon, uint16_t X, uint16_t Y);
 
 uint8_t read8(const unsigned char *buffer, uint32_t &buffPos);
 uint16_t read16(const unsigned char *buffer, uint32_t &buffPos);

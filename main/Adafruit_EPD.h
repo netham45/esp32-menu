@@ -57,21 +57,21 @@
 /**************************************************************************/
 enum
 {
-  EPD_WHITE, ///< white color
-  EPD_BLACK, ///< black color
-  EPD_RED,   ///< red color
-  EPD_GRAY,  ///< gray color ('red' on grayscale)
-  EPD_DARK,  ///< darker color
-  EPD_LIGHT, ///< lighter color
-  EPD_NUM_COLORS
+    EPD_WHITE, ///< white color
+    EPD_BLACK, ///< black color
+    EPD_RED,   ///< red color
+    EPD_GRAY,  ///< gray color ('red' on grayscale)
+    EPD_DARK,  ///< darker color
+    EPD_LIGHT, ///< lighter color
+    EPD_NUM_COLORS
 };
 
 #define EPD_swap(a, b) \
-  {                    \
-    int16_t t = a;     \
-    a = b;             \
-    b = t;             \
-  } ///< simple swap function
+    {                  \
+        int16_t t = a; \
+        a = b;         \
+        b = t;         \
+    } ///< simple swap function
 
 /**************************************************************************/
 /*!
@@ -81,101 +81,101 @@ enum
 class Adafruit_EPD
 {
 public:
-  Adafruit_EPD(int width, int height, int16_t DC, int16_t RST, int16_t CS,
-               int16_t BUSY = -1, SPIClass *spi = &SPI);
-  ~Adafruit_EPD();
+    Adafruit_EPD(int width, int height, int16_t DC, int16_t RST, int16_t CS,
+                 int16_t BUSY = -1, SPIClass *spi = &SPI);
+    ~Adafruit_EPD();
 
-  void begin(bool reset = true);
-  void drawPixel(int16_t x, int16_t y, uint16_t color);
-  void clearBuffer();
-  void clearDisplay();
-  void display(bool sleep = false);
+    void begin(bool reset = true);
+    void drawPixel(int16_t x, int16_t y, uint16_t color);
+    void clearBuffer();
+    void clearDisplay();
+    void display(bool sleep = false);
 
 protected:
-  void writeTripleRAMFramebufferToEPD(uint8_t *buffer1, uint32_t buffer1_size,
-                                      uint8_t *buffer2, uint32_t buffer2_size,
-                                      uint8_t *buffer3, uint32_t buffer3_size,
-                                      uint8_t EPDlocation, bool invertdata = false);
+    void writeTripleRAMFramebufferToEPD(uint8_t *buffer1, uint32_t buffer1_size,
+                                        uint8_t *buffer2, uint32_t buffer2_size,
+                                        uint8_t *buffer3, uint32_t buffer3_size,
+                                        uint8_t EPDlocation, bool invertdata = false);
 
-  /**************************************************************************/
-  /*!
-    @brief Send the specific command to start writing to EPD display RAM
-    @param index The index for which buffer to write (0 or 1 or tri-color
-    displays) Ignored for monochrome displays.
-    @returns The byte that is read from SPI at the same time as sending the
-    command
-  */
-  /**************************************************************************/
-  uint8_t writeRAMCommand(uint8_t index);
+    /**************************************************************************/
+    /*!
+      @brief Send the specific command to start writing to EPD display RAM
+      @param index The index for which buffer to write (0 or 1 or tri-color
+      displays) Ignored for monochrome displays.
+      @returns The byte that is read from SPI at the same time as sending the
+      command
+    */
+    /**************************************************************************/
+    uint8_t writeRAMCommand(uint8_t index);
 
-  /**************************************************************************/
-  /*!
-    @brief Some displays require setting the RAM address pointer
-    @param x X address counter value
-    @param y Y address counter value
-  */
-  /**************************************************************************/
-  void setRAMAddress(uint16_t x, uint16_t y);
+    /**************************************************************************/
+    /*!
+      @brief Some displays require setting the RAM address pointer
+      @param x X address counter value
+      @param y Y address counter value
+    */
+    /**************************************************************************/
+    void setRAMAddress(uint16_t x, uint16_t y);
 
-  void busy_wait(void);
+    void busy_wait(void);
 
-  /**************************************************************************/
-  /*!
-    @brief start up the display
-  */
-  /**************************************************************************/
-  void powerUp();
+    /**************************************************************************/
+    /*!
+      @brief start up the display
+    */
+    /**************************************************************************/
+    void powerUp();
 
-  /**************************************************************************/
-  /*!
-    @brief signal the display to update
-  */
-  /**************************************************************************/
-  void update(void);
+    /**************************************************************************/
+    /*!
+      @brief signal the display to update
+    */
+    /**************************************************************************/
+    void update(void);
 
-  /**************************************************************************/
-  /*!
-    @brief wind down the display
-  */
-  /**************************************************************************/
-  void powerDown(void);
-  void hardwareReset(void);
+    /**************************************************************************/
+    /*!
+      @brief wind down the display
+    */
+    /**************************************************************************/
+    void powerDown(void);
+    void hardwareReset(void);
 
-  int16_t _dc_pin,                    ///< data/command pin
-      _reset_pin,                     ///< reset pin
-      _cs_pin,                        ///< chip select pin
-      _busy_pin;                      ///< busy pin
-  Adafruit_SPIDevice *spi_dev = NULL; ///< SPI object
-  static bool _isInTransaction;       ///< true if SPI bus is in trasnfer state
-  bool singleByteTxns;                ///< if true CS will go high after every data byte
-                                      ///< transferred
+    int16_t _dc_pin,                    ///< data/command pin
+        _reset_pin,                     ///< reset pin
+        _cs_pin,                        ///< chip select pin
+        _busy_pin;                      ///< busy pin
+    Adafruit_SPIDevice *spi_dev = NULL; ///< SPI object
+    static bool _isInTransaction;       ///< true if SPI bus is in trasnfer state
+    bool singleByteTxns;                ///< if true CS will go high after every data byte
+                                        ///< transferred
 
-  const uint8_t *_epd_init_code = NULL;
-  const uint8_t *_epd_lut_code = NULL;
+    const uint8_t *_epd_init_code = NULL;
+    const uint8_t *_epd_lut_code = NULL;
 
-  uint16_t default_refresh_delay = 15000;
+    uint16_t default_refresh_delay = 15000;
 
-  uint32_t buffer1_size; ///< size of the primary buffer
-  uint32_t buffer2_size; ///< size of the secondary buffer
-  uint32_t buffer3_size;
-  uint8_t *buffer1;
-  uint8_t *buffer2;
-  uint8_t *buffer3;
-  uint32_t width;
-  uint32_t height;
+    uint32_t buffer1_size; ///< size of the primary buffer
+    uint32_t buffer2_size; ///< size of the secondary buffer
+    uint32_t buffer3_size;
+    uint8_t *buffer1;
+    uint8_t *buffer2;
+    uint8_t *buffer3;
+    uint32_t width;
+    uint32_t height;
 
-  void EPD_commandList(const uint8_t *init_code);
-  void EPD_command(uint8_t c, const uint8_t *buf, uint16_t len);
-  uint8_t EPD_command(uint8_t c, bool end = true);
-  void EPD_data(const uint8_t *buf, uint16_t len);
-  void EPD_data(uint8_t data);
+    void EPD_commandList(const uint8_t *init_code);
+    void EPD_command(uint8_t c, const uint8_t *buf, uint16_t len);
+    uint8_t EPD_command(uint8_t c, bool end = true);
+    void EPD_data(const uint8_t *buf, uint16_t len);
+    void EPD_data(uint8_t data);
 
-  uint8_t SPItransfer(uint8_t c);
+    uint8_t SPItransfer(uint8_t c);
 
-  void csLow();
-  void csHigh();
-  void dcHigh();
-  void dcLow();
+    void csLow();
+    void csHigh();
+    void dcHigh();
+    void dcLow();
 };
 
 #endif /* _ADAFRUIT_EPD_H_ */

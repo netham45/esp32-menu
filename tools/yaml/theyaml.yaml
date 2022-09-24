@@ -39,23 +39,23 @@ Menus:
       - Outside Lights
       - Lights Off
       - Lights On
-      - Lights Red Up
-      - Lights Red Down
-      - Lights Green Up
-      - Lights Green Down
-      - Lights Blue Up
-      - Lights Blue Down
-      - Lights White Up
-      - Lights White Down
-      - Lights Brightness Up
-      - Lights Brightness Down
+      #- Lights Red Up
+      #- Lights Red Down
+      #- Lights Green Up
+      #- Lights Green Down
+      #- Lights Blue Up
+      #- Lights Blue Down
+      #- Lights White Up
+      #- Lights White Down
+      #- Lights Brightness Up
+      #- Lights Brightness Down
       - Lights Red
       - Lights Green
       - Lights Blue
       - Lights Yellow
       - Lights Orange
       - Lights Purple
-      - Control TV
+      #- Control TV
   - Menu:
     Name: Computer
     Icon: placeholder
@@ -330,7 +330,7 @@ Buttons:
         Data: "0020000000"
   - Button:
     Name: Lights Green Down
-    Icon: light_green_dim
+    Icon: green_slider
     Label: Green -
     Actions:
       - Action:
@@ -339,7 +339,7 @@ Buttons:
         Data: "0020000000"
   - Button:
     Name: Lights Red Up
-    Icon: light_red_bright
+    Icon: red_slider
     Label: Red +
     Actions:
       - Action:
@@ -357,7 +357,7 @@ Buttons:
         Data: "2000000000"
   - Button:
     Name: Lights Blue Up
-    Icon: light_blue_bright
+    Icon: blue_slider
     Label: Blue +
     Actions:
       - Action:
@@ -375,7 +375,7 @@ Buttons:
         Data: "0000200000"
   - Button:
     Name: Lights White Up
-    Icon: light_yellow_bright
+    Icon: colortemp_slider
     Label: White +
     Actions:
       - Action:
@@ -463,6 +463,54 @@ Buttons:
         Type: Native
         Command: light_rgbw
         Data: "88008800"
+  - Button:
+    Name: red_slider
+    Icon: red_slider
+    Label: Red
+    Actions:
+      - Action:
+        Type: Native
+        Command: red_slider
+  - Button:
+    Name: green_slider
+    Icon: green_slider
+    Label: Green
+    Actions:
+      - Action:
+        Type: Native
+        Command: green_slider
+  - Button:
+    Name: blue_slider
+    Icon: blue_slider
+    Label: Blue
+    Actions:
+      - Action:
+        Type: Native
+        Command: blue_slider
+  - Button:
+    Name: white_slider
+    Icon: yellow_slider
+    Label: White
+    Actions:
+      - Action:
+        Type: Native
+        Command: white_slider
+  - Button:
+    Name: brightness_slider
+    Icon: yellow_slider
+    Label: Brightness
+    Actions:
+      - Action:
+        Type: Native
+        Command: brightness_slider
+  - Button:
+    Name: colortemp_slider
+    Icon: colortemp_slider
+    Label: Temperature
+    Actions:
+      - Action:
+        Type: Native
+        Command: colortemp_slider
   - Button:
     Name: Control Computer
     Icon: placeholder
