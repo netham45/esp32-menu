@@ -2,7 +2,7 @@
 import yaml,sys
 
 print('#include "graphics.h"')
-print('#include "structs.h"')
+print('#include "menu.h"')
 
 with open('theyaml.yaml', 'r') as file:
   yamldata = yaml.safe_load(file)
@@ -19,9 +19,10 @@ for Menu in yamldata["Menus"]:
     button_count = len(Menu['Buttons'])
     for Button in Menu['Buttons']:
       buttonList = buttonList + '"{}",'.format(Button)
-  print("const char* entries_{}[] = {{ {} }};".format(entry_count,buttonList))
-  print('const struct sequence sequence_{} = {{ "dummyname", {}, entries_{}}};'.format(sequence_count,button_count,entry_count))
-  print('const struct menu menu_{} = {{"{}","{}",&{}_bmp,"{}",sequence_{}}};'.format(menu_count,Menu['Name'],Menu['Icon'],Menu['Icon'],Menu['Label'],sequence_count))
+  else:
+    Menu['Buttons'] = [];
+  print("const char* buttons_{}[] = {{ {} }};".format(entry_count,buttonList))
+  print('const struct menu menu_{} = {{"{}","{}",&{}_bmp,"{}",buttons_{},{}}};'.format(menu_count,Menu['Name'],Menu['Icon'],Menu['Icon'],Menu['Label'],sequence_count,len(Menu['Buttons'])))
   entry_count += 1
   sequence_count += 1
   menu_count += 1

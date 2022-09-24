@@ -4,82 +4,19 @@ Menus:
     Icon: placeholder
     Label: Main Menu
     Buttons:
-      - Xbox
-      - Xbox One
-      - Playstation 2
-      - Genesis
-      - Dreamcast
-      - Switch
-      - Wii U
-      - SNES
-      - N64
-      - PC
-      - TV
-  - Menu:
-    Name: Xbox
-    Icon: xbox
-    Label: Original Xbox
-  - Menu:
-    Name: Xbox One
-    Icon: xboxone
-    Label: Xbox One
-  - Menu:
-    Name: Playstation 2
-    Icon: ps2
-    Label: Playstation 2
-    Buttons:
-      - RebootPS2
-  - Menu:
-    Name: Genesis
-    Icon: sega
-    Label: Genesis
-    Buttons:
-      - RebootGenesis
-  - Menu:
-    Name: Dreamcast
-    Icon: dreamcast
-    Label: Dreamcast
-    Buttons:
-      - RebootDreamcast
-  - Menu:
-    Name: Switch
-    Icon: switch
-    Label: Switch
-  - Menu:
-    Name: Wii U
-    Icon: wiiu
-    Label: Wii U/Wii/Gamecube
-  - Menu:
-    Name: SNES
-    Icon: snes
-    Label: Super Nintendo Entertainment System
-    Buttons:
-      - RebootSNES
-  - Menu:
-    Name: N64
-    Icon: n64
-    Label: Nintendo 64
-    Buttons:
-      - RebootN64
-  - Menu:
-    Name: PC
-    Icon: placeholder
-    Label: PC
+      - Control TV
+      - Control Lights
+      - Control Computer
+      - Control Alarm
+      - Control Misc
   - Menu:
     Name: TV
     Icon: placeholder
     Label: LG C1
     Buttons:
       - TV Power Toggle
-      - TV Input Up
-      - TV Input Down
-      - TV Input Left
-      - TV Input Right
-      - TV Input Enter
       - TV Menu
       - TV Input AppMenu
-      - TV Input Back
-      - TV Input Exit
       - TV Input Xbox
       - TV Input Xbox One
       - TV Input Genesis
@@ -94,7 +31,7 @@ Menus:
   - Menu:
     Name: Lights
     Icon: placeholder
-    Label: Toggle Lights
+    Label: Control Lights
     Buttons:
       - Livingroom Lights
       - Kitchen Lights
@@ -112,7 +49,34 @@ Menus:
       - Lights White Down
       - Lights Brightness Up
       - Lights Brightness Down
+      - Lights Red
+      - Lights Green
+      - Lights Blue
+      - Lights Yellow
+      - Lights Orange
+      - Lights Purple
       - Control TV
+  - Menu:
+    Name: Computer
+    Icon: placeholder
+    Label: Control Computer
+    Buttons:
+      - Control TV
+      - Control Lights
+  - Menu:
+    Name: Alarm
+    Icon: placeholder
+    Label: Control Alarm
+    Buttons:
+      - Control TV
+      - Control Lights
+  - Menu:
+    Name: Misc
+    Icon: placeholder
+    Label: Control Misc
+    Buttons:
+      - Control TV
+      - Control Lights
   - Menu:
     Name: TopBar
     Icon: placeholder
@@ -122,6 +86,13 @@ Menus:
       - Volume Down
       - Volume Mute
       - Main Menu
+      - TV Input Right
+      - TV Input Up
+      - TV Input Enter
+      - TV Input Down
+      - TV Input Left
+      - TV Input Back
+      - TV Input Exit
 Buttons:
   - Button:
     Name: Volume Up
@@ -157,7 +128,7 @@ Buttons:
     Actions:
       - Action:
         Type: Jump
-        Destination: TV
+        Destination: Main Menu
   - Button:
     Name: RebootPS2
     Icon: placeholder
@@ -200,7 +171,7 @@ Buttons:
         Service: script.rebootps2
   - Button:
     Name: TV Input Up
-    Icon: placeholder
+    Icon: uparrow
     Label: Up
     Actions:
       - Action:
@@ -209,7 +180,7 @@ Buttons:
         Data_json: {"button": "UP", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Down
-    Icon: placeholder
+    Icon: downarrow
     Label: Down
     Actions:
       - Action:
@@ -218,7 +189,7 @@ Buttons:
         Data_json: {"button": "DOWN", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Left
-    Icon: placeholder
+    Icon: leftarrow
     Label: Left
     Actions:
       - Action:
@@ -227,7 +198,7 @@ Buttons:
         Data_json: {"button": "LEFT", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Right
-    Icon: placeholder
+    Icon: rightarrow
     Label: Right
     Actions:
       - Action:
@@ -236,7 +207,7 @@ Buttons:
         Data_json: {"button": "RIGHT", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Enter
-    Icon: placeholder
+    Icon: backarrow
     Label: Enter
     Actions:
       - Action:
@@ -254,7 +225,7 @@ Buttons:
         Data_json: {"button": "HOME", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Back
-    Icon: placeholder
+    Icon: backarrow
     Label: Back
     Actions:
       - Action:
@@ -263,7 +234,7 @@ Buttons:
         Data_json: {"button": "BACK", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: TV Input Exit
-    Icon: placeholder
+    Icon: backarrow
     Label: Exit
     Actions:
       - Action:
@@ -298,7 +269,7 @@ Buttons:
         Data_json: {"button": "MENU", "entity_id": "media_player.livingroom_tv"}
   - Button:
     Name: Livingroom Lights
-    Icon: placeholder
+    Icon: light_yellow_dim
     Label: Livingroom
     Actions:
       - Action:
@@ -307,7 +278,7 @@ Buttons:
         Data: "light.livingroom_all_lights"
   - Button:
     Name: Kitchen Lights
-    Icon: placeholder
+    Icon: light_yellow_dim
     Label: Kitchen
     Actions:
       - Action:
@@ -316,7 +287,7 @@ Buttons:
         Data: "light.kitchen_and_dining_room_all_lights"
   - Button:
     Name: Master Bedroom Lights
-    Icon: placeholder
+    Icon: light_yellow_dim
     Label: Mstr Bdrm
     Actions:
       - Action:
@@ -325,7 +296,7 @@ Buttons:
         Data: "light.master_bedroom_all_lights"
   - Button:
     Name: Outside Lights
-    Icon: placeholder
+    Icon: light_yellow_dim
     Label: Outside
     Actions:
       - Action:
@@ -334,7 +305,7 @@ Buttons:
         Data: "light.outside_lights"  
   - Button:
     Name: Lights Off
-    Icon: placeholder
+    Icon: light_black_dim
     Label: Turn Off
     Actions:
       - Action:
@@ -342,7 +313,7 @@ Buttons:
         Command: light_off
   - Button:
     Name: Lights On
-    Icon: placeholder
+    Icon: light_yellow_bright
     Label: Turn On
     Actions:
       - Action:
@@ -350,87 +321,175 @@ Buttons:
         Command: light_on
   - Button:
     Name: Lights Green Up
-    Icon: placeholder
+    Icon: light_green_bright
     Label: Green +
     Actions:
       - Action:
         Type: Native
-        Command: light_green_up
+        Command: light_add_rgbwb
+        Data: 0020000000
   - Button:
     Name: Lights Green Down
-    Icon: placeholder
+    Icon: light_green_dim
     Label: Green -
     Actions:
       - Action:
         Type: Native
-        Command: light_green_down
+        Command: light_subtract_rgbwb
+        Data: 0020000000
   - Button:
     Name: Lights Red Up
-    Icon: placeholder
+    Icon: light_red_bright
     Label: Red +
     Actions:
       - Action:
         Type: Native
-        Command: light_red_up
+        Command: light_add_rgbwb
+        Data: 2000000000
   - Button:
     Name: Lights Red Down
-    Icon: placeholder
+    Icon: light_red_dim
     Label: Red -
     Actions:
       - Action:
         Type: Native
-        Command: light_red_down
+        Command: light_subtract_rgbwb
+        Data: 2000000000
   - Button:
     Name: Lights Blue Up
-    Icon: placeholder
+    Icon: light_blue_bright
     Label: Blue +
     Actions:
       - Action:
         Type: Native
-        Command: light_blue_up
+        Command: light_add_rgbwb
+        Data: 0000200000
   - Button:
     Name: Lights Blue Down
-    Icon: placeholder
+    Icon: light_blue_dim
     Label: Blue -
     Actions:
       - Action:
         Type: Native
-        Command: light_blue_down
+        Command: light_subtract_rgbwb
+        Data: 0000200000
   - Button:
     Name: Lights White Up
-    Icon: placeholder
+    Icon: light_yellow_bright
     Label: White +
     Actions:
       - Action:
         Type: Native
-        Command: light_white_up
+        Command: light_add_rgbwb
+        Data: 0000002000
   - Button:
     Name: Lights White Down
-    Icon: placeholder
+    Icon: light_yellow_dim
     Label: White -
     Actions:
       - Action:
         Type: Native
-        Command: light_white_down
+        Command: light_subtract_rgbwb
+        Data: 0000002000
   - Button:
     Name: Lights Brightness Up
-    Icon: placeholder
-    Label: Brightness +
+    Icon: light_yellow_bright
+    Label: Brghtnes +
     Actions:
       - Action:
         Type: Native
-        Command: light_brightness_up
+        Command: light_add_rgbwb
+        Data: 0000000020
   - Button:
     Name: Lights Brightness Down
-    Icon: placeholder
-    Label: Brightness -
+    Icon: light_yellow_dim
+    Label: Brghtnes -
     Actions:
       - Action:
         Type: Native
-        Command: light_brightness_down
+        Command: light_subtract_rgbwb
+        Data: 0000000020
+  - Button:
+    Name: Lights Red  
+    Icon: light_red_bright
+    Label: Red
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_rgbw
+        Data: FF000000
+  - Button:
+    Name: Lights Green
+    Icon: light_green_bright
+    Label: Green
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_rgbw
+        Data: 00FF0000
+  - Button:
+    Name: Lights Blue
+    Icon: light_blue_bright
+    Label: Blue
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_rgbw
+        Data: 0000FF00
+  - Button:
+    Name: Lights Yellow
+    Icon: light_yellow_bright
+    Label: Yellow
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_rgbw
+        Data: FFFF0000
+  - Button:
+    Name: Lights Orange
+    Icon: light_yellow_bright
+    Label: Orange
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_rgbw
+        Data: FF8C0000
+  - Button:
+    Name: Lights Purple
+    Icon: light_blue_bright
+    Label: Purple
+    Actions:
+      - Action:
+        Type: Native
+        Command: light_rgbw
+        Data: 88008800
+  - Button:
+    Name: Control Computer
+    Icon: placeholder
+    Label: Computer
+    Actions:
+      - Action:
+        Type: Jump
+        Destination: Computer
+  - Button:
+    Name: Control Alarm
+    Icon: placeholder
+    Label: Alarm
+    Actions:
+      - Action:
+        Type: Jump
+        Destination: Alarm
+  - Button:
+    Name: Control Misc
+    Icon: placeholder
+    Label: Misc
+    Actions:
+      - Action:
+        Type: Jump
+        Destination: Misc
   - Button:
     Name: Control Lights
-    Icon: placeholder
+    Icon: light_yellow_bright
     Label: Lights
     Actions:
       - Action:
