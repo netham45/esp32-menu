@@ -327,7 +327,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_add_rgbwb
-        Data: 0020000000
+        Data: "0020000000"
   - Button:
     Name: Lights Green Down
     Icon: light_green_dim
@@ -336,7 +336,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_subtract_rgbwb
-        Data: 0020000000
+        Data: "0020000000"
   - Button:
     Name: Lights Red Up
     Icon: light_red_bright
@@ -345,7 +345,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_add_rgbwb
-        Data: 2000000000
+        Data: "2000000000"
   - Button:
     Name: Lights Red Down
     Icon: light_red_dim
@@ -354,7 +354,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_subtract_rgbwb
-        Data: 2000000000
+        Data: "2000000000"
   - Button:
     Name: Lights Blue Up
     Icon: light_blue_bright
@@ -363,7 +363,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_add_rgbwb
-        Data: 0000200000
+        Data: "0000200000"
   - Button:
     Name: Lights Blue Down
     Icon: light_blue_dim
@@ -372,7 +372,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_subtract_rgbwb
-        Data: 0000200000
+        Data: "0000200000"
   - Button:
     Name: Lights White Up
     Icon: light_yellow_bright
@@ -381,7 +381,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_add_rgbwb
-        Data: 0000002000
+        Data: "0000002000"
   - Button:
     Name: Lights White Down
     Icon: light_yellow_dim
@@ -390,7 +390,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_subtract_rgbwb
-        Data: 0000002000
+        Data: "0000002000"
   - Button:
     Name: Lights Brightness Up
     Icon: light_yellow_bright
@@ -399,7 +399,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_add_rgbwb
-        Data: 0000000020
+        Data: "0000000020"
   - Button:
     Name: Lights Brightness Down
     Icon: light_yellow_dim
@@ -408,7 +408,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_subtract_rgbwb
-        Data: 0000000020
+        Data: "0000000020"
   - Button:
     Name: Lights Red  
     Icon: light_red_bright
@@ -417,7 +417,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_rgbw
-        Data: FF000000
+        Data: "FF000000"
   - Button:
     Name: Lights Green
     Icon: light_green_bright
@@ -426,7 +426,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_rgbw
-        Data: 00FF0000
+        Data: "00FF0000"
   - Button:
     Name: Lights Blue
     Icon: light_blue_bright
@@ -435,7 +435,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_rgbw
-        Data: 0000FF00
+        Data: "0000FF00"
   - Button:
     Name: Lights Yellow
     Icon: light_yellow_bright
@@ -444,7 +444,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_rgbw
-        Data: FFFF0000
+        Data: "FFFF0000"
   - Button:
     Name: Lights Orange
     Icon: light_yellow_bright
@@ -453,7 +453,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_rgbw
-        Data: FF8C0000
+        Data: "FF8C0000"
   - Button:
     Name: Lights Purple
     Icon: light_blue_bright
@@ -462,7 +462,7 @@ Buttons:
       - Action:
         Type: Native
         Command: light_rgbw
-        Data: 88008800
+        Data: "88008800"
   - Button:
     Name: Control Computer
     Icon: placeholder

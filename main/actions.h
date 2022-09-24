@@ -66,6 +66,7 @@ struct action_task
     uint16_t y;
 };
 
+#define MAX_TASKS 6 //Max number of concurent actions to run, additional actions beyond this will block the UI.
 
 void harequest(const char *service, const char *target_json, const char *data_json);
 void httpRequest();

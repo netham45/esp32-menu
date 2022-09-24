@@ -2,9 +2,11 @@
 #include "math.h"
 #include "freertos/semphr.h"
 SemaphoreHandle_t lightOptions_mux = 0;
-bool lightOptions_mux_init = false;
 RTC_DATA_ATTR int16_t light_red = 255, light_green = 255, light_blue = 255, light_white = 255, light_brightness = 255;
 RTC_DATA_ATTR char lightName[64] = {0};
+
+SemaphoreHandle_t taskcount_mux = 0;
+int taskcount = 0;
 
 double clamp(double x, double upper, double lower)
 {
@@ -56,19 +58,19 @@ void harequest(const char *service, const char *target_json, const char *data_js
 
 void ha_light_set_color(bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
 {
-    while(!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
+    while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
     {
         vTaskDelay(10);
     }
     char _lightName[64];
-    strcpy(_lightName,lightName);
+    strcpy(_lightName, lightName);
     light_red = red;
     light_green = green;
     light_blue = blue;
     light_white = white;
     light_brightness = brightness;
     xSemaphoreGive(lightOptions_mux);
-    ha_light_send_state(_lightName,turnOn,red,green,blue,white,brightness);
+    ha_light_send_state(_lightName, turnOn, red, green, blue, white, brightness);
 }
 
 void ha_light_send_state(const char *_lightName, bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
@@ -89,7 +91,7 @@ void ha_light_send_state(const char *_lightName, bool turnOn, uint8_t red, uint8
 }
 void ha_light_add_subtract_color(bool subtract, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness)
 {
-    while(!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
+    while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
     {
         vTaskDelay(10);
     }
@@ -109,29 +111,29 @@ void ha_light_add_subtract_color(bool subtract, uint8_t red, uint8_t green, uint
         light_white -= white;
         light_brightness -= brightness;
     }
-    light_red=clamp(light_red,0,255);
-    light_green=clamp(light_green,0,255);
-    light_blue=clamp(light_blue,0,255);
-    light_white=clamp(light_white,0,255);
-    light_brightness=clamp(light_brightness,0,255);
-    red=light_red;
-    green=light_green;
-    blue=light_blue;
-    white=light_white;
-    brightness=light_brightness;
+    light_red = clamp(light_red, 255, 0);
+    light_green = clamp(light_green, 255, 0);
+    light_blue = clamp(light_blue, 255, 0);
+    light_white = clamp(light_white, 255, 0);
+    light_brightness = clamp(light_brightness, 255, 0);
+    red = light_red;
+    green = light_green;
+    blue = light_blue;
+    white = light_white;
+    brightness = light_brightness;
     char _lightName[64];
-    strcpy(_lightName,lightName);
+    strcpy(_lightName, lightName);
     xSemaphoreGive(lightOptions_mux);
-    ha_light_send_state(_lightName,true,red,green,blue,white,brightness);
+    ha_light_send_state(_lightName, true, red, green, blue, white, brightness);
 }
 
-void ha_light_select(const char* name)
+void ha_light_select(const char *name)
 {
-    while(!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
+    while (!xSemaphoreTake(lightOptions_mux, portMAX_DELAY) == pdTRUE)
     {
         vTaskDelay(10);
     }
-    strcpy(lightName,name);
+    strcpy(lightName, name);
     xSemaphoreGive(lightOptions_mux);
 }
 
@@ -163,32 +165,57 @@ void httpRequest()
     Serial.printf("post status: %i\n", http.responseStatusCode());
 }
 
-void taskDoActions(const action* pActions, uint8_t numActions,uint16_t x, uint16_t y)
+void taskDoActions(const action *pActions, uint8_t numActions, uint16_t x, uint16_t y)
 {
     if (!lightOptions_mux)
     {
         lightOptions_mux = xSemaphoreCreateMutex();
     }
+    if (!taskcount_mux)
+    {
+        taskcount_mux = xSemaphoreCreateMutex();
+    }
     assert(lightOptions_mux);
-    struct action_task *taskParams = (action_task*)malloc(sizeof(action_task));
+    assert(taskcount_mux);
+    bool keepwaiting = true;
+    while (keepwaiting)
+    {
+        while (!xSemaphoreTake(taskcount_mux, portMAX_DELAY) == pdTRUE)
+        {
+            vTaskDelay(10);
+        }
+        if (taskcount < MAX_TASKS)
+        {
+            taskcount++;
+            keepwaiting = false;
+        }
+        xSemaphoreGive(taskcount_mux);
+        delay(10);
+    }
+    struct action_task *taskParams = (action_task *)malloc(sizeof(action_task));
     taskParams->actions = pActions;
     taskParams->numActions = numActions;
     taskParams->x = x;
     taskParams->y = y;
-    Serial.printf("pParams: %p pActions %p\n",taskParams,pActions);
-    xTaskCreatePinnedToCore(&taskDoActionsDo, "Action_Exec", 20000, taskParams, 1, NULL,  1); 
+    xTaskCreatePinnedToCore(&taskDoActionsDo, "Action_Exec", 10000, taskParams, 1, NULL, 1);
 }
 
 void taskDoActionsDo(void *pParams)
 {
-    struct action_task *taskParams = (action_task*)pParams;
-    Serial.printf("pParams: %p, pActions %p numActions %p\n",pParams, taskParams->actions,taskParams->numActions);
-    doActions(taskParams->actions,taskParams->numActions,taskParams->x,taskParams->y);
+    struct action_task *taskParams = (action_task *)pParams;
+    doActions(taskParams->actions, taskParams->numActions, taskParams->x, taskParams->y);
     free(taskParams);
-    vTaskDelete( NULL );
+    while (xSemaphoreTake(taskcount_mux, portMAX_DELAY) != pdTRUE)
+    {
+        vTaskDelay(10);
+    }
+    taskcount--;
+    assert(taskcount > -1);
+    xSemaphoreGive(taskcount_mux);
+    vTaskDelete(NULL);
 }
 
-void doActions(const action* pActions, uint8_t numActions,uint16_t x, uint16_t y) // x,y are relative to the upper left corner of the hitbox
+void doActions(const action *pActions, uint8_t numActions, uint16_t x, uint16_t y) // x,y are relative to the upper left corner of the hitbox
 {
     const action actions = *pActions;
     for (int i = 0; i < numActions; i++)
@@ -227,30 +254,48 @@ void doActions(const action* pActions, uint8_t numActions,uint16_t x, uint16_t y
                 ha_light_set_color(false, 0, 0, 0, 0, 0);
             }
             else if (strcmp("light_on", actions.data.native.command) == 0)
-            {   
-                ha_light_set_color(true, 0,0,0,0xFF,0xFF);
+            {
+                ha_light_set_color(true, 0, 0, 0, 0xFF, 0xFF);
             }
             else if (strcmp("light_rgbw", actions.data.native.command) == 0)
-            {   
+            {
                 uint32_t hexval;
-                uint8_t *rgbw = (uint8_t*)&hexval;
+                uint8_t *rgbw = (uint8_t *)&hexval;
                 sscanf(actions.data.native.data, "%x", &hexval);
 
-                ha_light_set_color(true, rgbw[3],rgbw[2],rgbw[1],rgbw[0],0xFF);
+                ha_light_set_color(true, rgbw[3], rgbw[2], rgbw[1], rgbw[0], 0xFF);
             }
             else if (strcmp("light_add_rgbwb", actions.data.native.command) == 0)
             {
-                uint64_t hexval;
-                uint8_t *rgbw = (uint8_t*)&hexval;
-                sscanf(actions.data.native.data, "%u", &hexval);
-                ha_light_add_subtract_color(false,rgbw[4], rgbw[3], rgbw[2], rgbw[1], rgbw[0]);
+                Serial.printf("data: %s\n", actions.data.native.data);
+                char top8[9] = {0};
+                char bottom2[3] = {0};
+                memcpy(top8, actions.data.native.data, 8);
+                memcpy(bottom2, actions.data.native.data + 8, 2);
+                uint32_t lrgbw;
+                uint8_t *rgbw = (uint8_t *)&lrgbw;
+                uint32_t ibrightness;
+                uint8_t *brightness = (uint8_t *)&ibrightness;
+                sscanf(top8, "%x", &lrgbw);
+                sscanf(bottom2, "%x", &ibrightness);
+                Serial.printf("(add) Got rgbwb: %x %x %x %x %x\n", rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
+                ha_light_add_subtract_color(false, rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
             }
             else if (strcmp("light_subtract_rgbwb", actions.data.native.command) == 0)
             {
-                uint64_t hexval;
-                uint8_t *rgbw = (uint8_t*)&hexval;
-                sscanf(actions.data.native.data, "%u", &hexval);
-                ha_light_add_subtract_color(true,rgbw[4], rgbw[3], rgbw[2], rgbw[1], rgbw[0]);
+                char top8[9] = {0};
+                char bottom2[3] = {0};
+                memcpy(top8, actions.data.native.data, 8);
+                memcpy(bottom2, actions.data.native.data + 8, 2);
+                Serial.printf("top8: %s bottom2: %s\n", top8, bottom2);
+                uint32_t irgbw;
+                uint8_t *rgbw = (uint8_t *)&irgbw;
+                uint32_t ibrightness;
+                uint8_t *brightness = (uint8_t *)&ibrightness;
+                sscanf(top8, "%x", &irgbw);
+                sscanf(bottom2, "%x", &ibrightness);
+                Serial.printf("(Subtract) Got rgbwb: %x %x %x %x %x\n", rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
+                ha_light_add_subtract_color(true, rgbw[3], rgbw[2], rgbw[1], rgbw[0], brightness[0]);
             }
             else
             {

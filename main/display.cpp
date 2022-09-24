@@ -4,7 +4,7 @@
 #include "font.h"
 
 #include "freertos/semphr.h"
-SemaphoreHandle_t display_mux; //anything that calls the display object needs locked.
+SemaphoreHandle_t display_mux; //anything that calls the display object needs wrapped.
 
 Adafruit_EPD *display = 0;
 
