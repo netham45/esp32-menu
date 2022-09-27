@@ -46,8 +46,10 @@ button *getButtonFromName(const char *name);
 uint8_t getMenuIndexFromName(const char *name);
 void setupMenu();
 void updateMenu(bool renderMenu);
-bool checkHotspot(uint16_t x, uint16_t y, bool _doActions);
+void runHotspot(int x, int y, int lastX, int lastY, int hotspotIndex, bool isFirstPress);
+int checkHotspot(int x, int y);
 void jumpToMenu(const char *menuName);
 void normalizeTouch(uint16_t *x, uint16_t *y);
+void setFakeTouch(int x, int y);
 void processTouchLoop();
 #endif

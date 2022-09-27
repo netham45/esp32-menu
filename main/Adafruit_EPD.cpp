@@ -362,6 +362,38 @@ void Adafruit_EPD::drawPixel(int16_t x, int16_t y, uint16_t color) {
   }
 }
 
+uint8_t Adafruit_EPD::getPixel(int16_t x, int16_t y)
+{
+  if ((x < 0) || (x >= width) || (y < 0) || (y >= height))
+    return 0;
+  
+  uint8_t *pBuf = 0;
+  uint32_t addr = ((uint32_t)x + (uint32_t)y * width) / 2;
+  if (addr < buffer1_size)
+  {
+	  pBuf = buffer1;
+  }
+  else if(addr < buffer1_size + buffer2_size)
+  {
+	  addr -= buffer1_size;
+	  pBuf = buffer2;
+  }
+  else
+  {
+	  addr -= buffer1_size;
+	  addr -= buffer2_size;
+	  pBuf = buffer3;
+  }
+
+  pBuf = pBuf + addr;
+  bool lower_nibble = x % 2;
+  if (lower_nibble) {
+    return *pBuf & 0x0F;
+  } else {
+    return *pBuf >> 4;
+  }
+}
+
 /**************************************************************************/
 /*!
     @brief wait for busy signal to end

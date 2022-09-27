@@ -2,9 +2,11 @@
 #define display_h
 #include "Adafruit_EPD.h"
 #include "graphics.h"
+#include <WiFi.h>
 
 void setupDisplay();
 void bmpDraw(const unsigned char *bmpFile, int16_t x, int16_t y, uint8_t overrideColor = 255);
+void sendFrameBufferAsBMP(WiFiClient webClient);
 void drawHorizLine(uint16_t X1, uint16_t X2, uint16_t Y, uint16_t color);
 
 void drawVertLine(uint16_t X, uint16_t Y1, uint16_t Y2, uint16_t color);

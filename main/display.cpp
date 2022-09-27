@@ -2,9 +2,10 @@
 #include "Adafruit_EPD.h"
 #include "display.h"
 #include "font.h"
-
 #include "freertos/semphr.h"
+
 SemaphoreHandle_t display_mux; // anything that calls the display object needs locked.
+SemaphoreHandle_t display_draw_mux; // anything that calls the display object needs locked.
 
 Adafruit_EPD *display = 0;
 
@@ -17,6 +18,7 @@ Adafruit_EPD *display = 0;
 void setupDisplay()
 {
     display_mux = xSemaphoreCreateMutex();
+    display_draw_mux = xSemaphoreCreateMutex();
     display = new Adafruit_EPD(600, 448, EPD_DC, EPD_RESET, EPD_CS, EPD_BUSY);
 
     display->begin();
@@ -133,6 +135,45 @@ void bmpDraw(const unsigned char *bmpFile, int16_t x, int16_t y, uint8_t overrid
     xSemaphoreGive(display_mux);
 }
 
+void sendFrameBufferAsBMP(WiFiClient webClient)
+{
+    while (!xSemaphoreTake(display_mux, portMAX_DELAY) == pdTRUE)
+    {
+        vTaskDelay(10);
+    }
+    // Begin BMP header
+    webClient.printf("%c%c", 0x42, 0x4D);                 // Magic (BM)
+    webClient.printf("%c%c%c%c", 0x00, 0x00, 0x00, 0x00); // File Size (Ignore)
+    webClient.printf("%c%c%c%c", 0x00, 0x00, 0x00, 0x00); // Read (Ignore)
+    webClient.printf("%c%c%c%c", 0x52, 0x00, 0x00, 0x00); // File Start Offset (Starts at 0x52)
+    // Begin DIB header
+    webClient.printf("%c%c%c%c", 0x28, 0x00, 0x00, 0x00); // Header Size (40)
+    webClient.printf("%c%c%c%c", 0x58, 0x02, 0x00, 0x00); // Width (600)
+    webClient.printf("%c%c%c%c", 0x40, 0xFE, 0xFF, 0xFF); // Height (448)
+    webClient.printf("%c%c", 0x01, 0x00);                 // Planes (Ignore, always 1)
+    webClient.printf("%c%c", 0x04, 0x00);                 // BPP (4)
+    webClient.printf("%c%c%c%c", 0x00, 0x00, 0x00, 0x00); // Compression Type (0=none)
+    webClient.printf("%c%c%c%c", 0x00, 0x08, 0x00, 0x00); // Image size (Unused)
+    webClient.printf("%c%c%c%c", 0x23, 0x2E, 0x00, 0x00); // Horiz resolution
+    webClient.printf("%c%c%c%c", 0x23, 0x2E, 0x00, 0x00); // Vert resolution
+    webClient.printf("%c%c%c%c", 0x07, 0x00, 0x00, 0x00); // Number of colors (7)
+    webClient.printf("%c%c%c%c", 0x07, 0x00, 0x00, 0x00); // Number of important colors (0=all, 7 also is all)
+
+    // Palette data              Blue, Green, Red, Alpha
+    webClient.printf("%c%c%c%c", 0x00, 0x00, 0x00, 0x00); // Black
+    webClient.printf("%c%c%c%c", 0xFF, 0xFF, 0xFF, 0x00); // White
+    webClient.printf("%c%c%c%c", 0xAF, 0xFF, 0x00, 0x00); // Green
+    webClient.printf("%c%c%c%c", 0xFF, 0x00, 0x00, 0x00); // Blue
+    webClient.printf("%c%c%c%c", 0x00, 0x00, 0xFF, 0x00); // Red
+    webClient.printf("%c%c%c%c", 0x00, 0xFF, 0xFF, 0x00); // Yellow
+    webClient.printf("%c%c%c%c", 0x00, 0x80, 0xFF, 0x00); // Orange
+
+    webClient.write(display->buffer1, display->buffer1_size);
+    webClient.write(display->buffer2, display->buffer2_size);
+    webClient.write(display->buffer3, display->buffer3_size);
+    xSemaphoreGive(display_mux);
+}
+
 void drawHorizLine(uint16_t X1, uint16_t X2, uint16_t Y, uint16_t color)
 {
     while (!xSemaphoreTake(display_mux, portMAX_DELAY) == pdTRUE)
@@ -193,12 +234,12 @@ void setPixel(uint16_t X, uint16_t Y, uint8_t color)
 
 void updateDisplay()
 {
-    while (!xSemaphoreTake(display_mux, portMAX_DELAY) == pdTRUE)
+    while (!xSemaphoreTake(display_draw_mux, portMAX_DELAY) == pdTRUE)
     {
         vTaskDelay(10);
     }
     display->display();
-    xSemaphoreGive(display_mux);
+    xSemaphoreGive(display_draw_mux);
 }
 
 void clearDisplay()

@@ -20,10 +20,13 @@ extern uint32_t numButtons;
 
 Adafruit_TSC2007 touch;
 
-uint16_t x = 0, y = 0, z1 = 0, z2 = 0;
-
 struct hotspot hotspots[MAX_HOTSPOTS];
 uint8_t numHotspots = 0;
+
+int fakeClickX = -1;
+int fakeClickY = -1;
+
+uint16_t x = 0, y = 0, z1 = 0, z2 = 0;
 
 void dumpConfig()
 {
@@ -182,13 +185,12 @@ void updateBody(bool renderMenu)
     }
 }
 
-void updateColorSelectWidget(bool renderMenu,uint16_t left, uint16_t top)
+void updateColorSelectWidget(bool renderMenu, uint16_t left, uint16_t top)
 {
     const uint8_t widgetButtonCount = 6;
-    const char* widgetButtons[widgetButtonCount] = { "red_slider", "green_slider", "blue_slider", "white_slider", "brightness_slider", "colortemp_slider"};
-    
+    const char *widgetButtons[widgetButtonCount] = {"red_slider", "green_slider", "blue_slider", "white_slider", "brightness_slider", "colortemp_slider"};
 
-    for (int i=0;i<widgetButtonCount;i++)
+    for (int i = 0; i < widgetButtonCount; i++)
     {
         struct button *widgetButton = getButtonFromName(widgetButtons[i]);
 
@@ -205,9 +207,8 @@ void updateColorSelectWidget(bool renderMenu,uint16_t left, uint16_t top)
             drawString(left, top + 10, widgetButton->label, 0);
         }
         top += 34;
-    }    
+    }
 }
-
 
 void updateBodyLights(bool renderMenu)
 {
@@ -237,10 +238,9 @@ void updateBodyLights(bool renderMenu)
         }
     }
 
-    
     uint16_t top = 6 + 38 + 94 + (1 * 100);
     uint16_t left = 6;
-    updateColorSelectWidget(renderMenu,left,top);
+    updateColorSelectWidget(renderMenu, left, top);
 
     if (!renderMenu)
         return;
@@ -330,20 +330,25 @@ uint8_t getMenuIndexFromName(const char *name)
     return -1;
 }
 
-bool checkHotspot(uint16_t x, uint16_t y, bool _doActions)
+void runHotspot(int x, int y, int lastX, int lastY, int hotspotIndex, bool isFirstPress)
 {
-    bool foundHotspot = false;
+    int16_t relX = x - hotspots[hotspotIndex].x;
+    int16_t relY = y - hotspots[hotspotIndex].y;
+    int16_t relLastX = lastX - hotspots[hotspotIndex].x;
+    int16_t relLastY = lastY - hotspots[hotspotIndex].y;
+    taskDoActions(hotspots[hotspotIndex].actions, hotspots[hotspotIndex].numActions, relX, relY, relLastX, relLastY, isFirstPress);
+}
+
+int checkHotspot(int x, int y)
+{
     for (int i = 0; i < numHotspots; i++)
     {
         if (x > hotspots[i].x && x < (hotspots[i].x + hotspots[i].width) && y > hotspots[i].y && y < (hotspots[i].y + hotspots[i].height))
         {
-
-            if (_doActions)
-                taskDoActions(hotspots[i].actions, hotspots[i].numActions, x - hotspots[i].x, y - hotspots[i].y);
-            foundHotspot = true;
+            return i;
         }
     }
-    return foundHotspot;
+    return -1;
 }
 
 void jumpToMenu(const char *menuName)
@@ -367,6 +372,12 @@ void normalizeTouch(uint16_t *x, uint16_t *y)
     *y = round((double(*y) / double(top - bottom)) * 448);
 }
 
+void setFakeTouch(int x, int y)
+{
+    fakeClickX = x;
+    fakeClickY = y;
+}
+
 void processTouchLoop()
 {
     uint32_t awakeFor = 0;
@@ -374,48 +385,71 @@ void processTouchLoop()
     bool buttonReleased = true;
     uint32_t buttonHeldAt = 0;
     uint32_t actionLastRan = 0;
+    uint32_t lastX = 0;
+    uint32_t lastY = 0;
+    int hotspotIndex = -1;
+    int pressedHotspotIndex = -1; // Track which hotspot is pressed when a drag action is occurring
     while (awakeFor < STAY_AWAKE_MS)
     {
         handleOTA();
         if (!firstRead)
         {
-            touch.read_touch(&y, &x, &z1, &z2); // Swap y,x because screen is rotated.
+            if (fakeClickX != -1 && fakeClickY != -1)
+            {
+                x = fakeClickX;
+                y = fakeClickY;
+                z1 = 2048;
+                z2 = 4096;
+            }
+            else
+            {
+                //touch.read_touch(&y, &x, &z1, &z2); // Swap y,x because screen is rotated.
+
+                //TODO: Undo when touchscreen isn't broken
+                x = 0;
+                y = 0;
+                z1 = 0;
+                z2 = 4096;
+            }
+            
         }
         else
         {
             firstRead = false;
         }
-        if (x == 0 || y == 0 || z1 < 30)
+        if (x == 0 || y == 0 || z1 < 30) // Filter out low pressure touches and bad reads, z1 is touch pressure.
         {
+            if (!buttonReleased)
+            Serial.printf("Release\n");
             buttonReleased = true;
+            pressedHotspotIndex = -1;
             awakeFor += 10;
             delay(10);
             continue;
         }
-        normalizeTouch(&x, &y);
-        if (checkHotspot(x, y, false))
+        if (fakeClickX == -1 || fakeClickY == -1)
+            normalizeTouch(&x, &y);
+        if ((buttonReleased || millis() - buttonHeldAt > 450) && millis() - actionLastRan > 100) // Wait 450ms between first press and repeating, then repeat every 100ms
         {
-            if (((buttonReleased) || (millis() - buttonHeldAt > 250)) && (millis() - actionLastRan > 100))
+            hotspotIndex = checkHotspot(x, y);
+            Serial.printf("hotspot index: %i\n",hotspotIndex);
+            if (hotspotIndex != -1 || pressedHotspotIndex != -1)
             {
-                bool hotspotFound = checkHotspot(x, y, true);
-                if (buttonReleased && hotspotFound)
+                awakeFor = 0;
+
+                if (buttonReleased)
                 {
-                    awakeFor = 0;
-                    actionLastRan = buttonHeldAt = millis();
+                    Serial.printf("Button Press");
+                    buttonHeldAt = millis();
+                    pressedHotspotIndex = hotspotIndex;
                 }
-                else if (hotspotFound)
-                {
-                    actionLastRan = millis();
-                }
-                else
-                {
-                    buttonReleased = false;
-                }
+                actionLastRan = millis();
+                Serial.printf("hotspotIndex: %i pressedHotspotIndex: %i\n",hotspotIndex,pressedHotspotIndex);
+                runHotspot(x, y, lastX, lastY, pressedHotspotIndex, buttonReleased);
+                buttonReleased = false;
+                lastX = x;
+                lastY = y;
             }
-        }
-        else
-        {
-            buttonReleased = true;
         }
         awakeFor += 10;
         delay(10);

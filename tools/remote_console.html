@@ -1,0 +1,73 @@
+<HTML>
+  <HEAD>
+    <TITLE>
+	  ESP32 Menu Remote Control
+	</TITLE>
+  <SCRIPT TYPE='text/javascript'>
+    var mouseclicked = false;
+	var x = -1;
+	var y = -1;
+    window.onload = function() {
+      document.getElementById('screenshot').addEventListener('mousedown', function (e) {
+	      mouseclicked = true;
+		  x = event.offsetX;
+		  y = event.offsetY;
+        }
+	  );
+      document.getElementById('screenshot').addEventListener('touchstart', function (e) {
+	      mouseclicked = true;
+          var bcr = e.target.getBoundingClientRect();
+          x = parseInt(e.touches[0].clientX - bcr.x);
+          y = parseInt(e.touches[0].clientY - bcr.y);
+        }
+	  );
+	  document.getElementById('screenshot').addEventListener('mouseup', function (e) {
+	      mouseclicked = false;
+		  x = -1;
+		  y = -1;
+        }
+	  );
+      document.getElementById('screenshot').addEventListener('touchend', function (e) {
+	      mouseclicked = false;
+		  x = -1;
+		  y = -1;
+        }
+	  );
+      document.getElementById('screenshot').addEventListener('touchcancel', function (e) {
+	      mouseclicked = false;
+		  x = -1;
+		  y = -1;
+        }
+	  );
+	  document.getElementById('screenshot').addEventListener('mousemove', function (e) {
+  	      if (mouseclicked)
+	      {
+			x = event.offsetX;
+			y = event.offsetY;
+		  }
+        }
+	  );
+      document.getElementById('screenshot').addEventListener('touchmove', function (e) {
+  	      if (mouseclicked)
+	      {
+            var bcr = e.target.getBoundingClientRect();
+            x = parseInt(e.touches[0].clientX - bcr.x);
+            y = parseInt(e.touches[0].clientY - bcr.y);
+		  }
+        }
+	  );
+	  setInterval(sendXY,100);
+    }
+	function sendXY()
+	{
+	  var xhr = new XMLHttpRequest();
+	  var url = 'http://192.168.5.136/click?XY=' + x + ',' + y;
+	  xhr.open('GET', url, true);
+	  xhr.send();
+	}
+  </SCRIPT>
+  </HEAD>
+  <BODY>
+    <IMG SRC='http://192.168.5.136/screenshot.bmp' ID='screenshot' DRAGGABLE='false' />
+  </BODY>
+</HTML>

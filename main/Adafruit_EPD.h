@@ -87,11 +87,11 @@ public:
 
     void begin(bool reset = true);
     void drawPixel(int16_t x, int16_t y, uint16_t color);
+    uint8_t getPixel(int16_t x, int16_t y);
     void clearBuffer();
     void clearDisplay();
     void display(bool sleep = false);
 
-protected:
     void writeTripleRAMFramebufferToEPD(uint8_t *buffer1, uint32_t buffer1_size,
                                         uint8_t *buffer2, uint32_t buffer2_size,
                                         uint8_t *buffer3, uint32_t buffer3_size,

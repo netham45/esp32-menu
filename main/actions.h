@@ -64,20 +64,25 @@ struct action_task
     uint32_t numActions;
     int x;
     int y;
+    int lastX;
+    int lastY;
+    bool isFirstClick;
 };
 
 #define MAX_TASKS 4 // Max number of concurent actions to run, additional actions beyond this will block the UI.
 
 double clamp(double x, double upper, double lower);
 void harequest(const char *service, const char *target_json, const char *data_json);
-void ha_light_send_state(const char *_lightName, bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness);
-void ha_light_send_state_colortemp(const char *_lightName, uint16_t colorTemp, uint8_t brightness);
+void ha_light_send_rgbwb(const char *_lightName, bool turnOn, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness);
+void ha_light_send_colortemp(const char *_lightName, uint16_t colorTemp, uint8_t brightness);
+void ha_light_send_brightness(const char *_lightName, uint8_t brightness);
 void ha_light_set_color(bool turnOn, int red, int green, int blue, int white, int brightness);
 void ha_light_set_colortemp(int colortemp);
+void ha_light_set_brightness(int brightness);
 void ha_light_add_subtract_color(bool subtract, uint8_t red, uint8_t green, uint8_t blue, uint8_t white, uint8_t brightness);
 void ha_light_select(const char *name);
 void httpRequest();
-void taskDoActions(const action *pActions, uint8_t numActions, int x, int y);
+void taskDoActions(const action *pActions, uint8_t numActions, int x, int y, int lastX, int lastY, bool isFirstClick);
 void taskDoActionsDo(void *params);
-void doActions(const action *pActions, uint8_t numActions, int x, int y);
+void doActions(const action *pActions, uint8_t numActions, int x, int y, int lastX, int lastY, bool isFirstClick);
 #endif
